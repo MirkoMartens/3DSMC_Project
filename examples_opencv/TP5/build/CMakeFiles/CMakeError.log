@@ -1,0 +1,62 @@
+Performing C++ SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/fzemiri/Annee_2/Rendu2/TP5/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_66de6/fast && make: Avertissement : le fichier « Makefile » a une date de modification 11 s dans le futur
+/usr/bin/make -f CMakeFiles/cmTC_66de6.dir/build.make CMakeFiles/cmTC_66de6.dir/build
+make[1] : on entre dans le répertoire « /home/fzemiri/Annee_2/Rendu2/TP5/build/CMakeFiles/CMakeTmp »
+make[1]: Avertissement : le fichier « CMakeFiles/cmTC_66de6.dir/flags.make » a une date de modification 11 s dans le futur
+Building CXX object CMakeFiles/cmTC_66de6.dir/src.cxx.o
+/mnt/n7fs/ens/tp_cregut/gnat/bin/c++    -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_66de6.dir/src.cxx.o -c /home/fzemiri/Annee_2/Rendu2/TP5/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_66de6
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_66de6.dir/link.txt --verbose=1
+/mnt/n7fs/ens/tp_cregut/gnat/bin/c++   -DCMAKE_HAVE_LIBC_PTHREAD    CMakeFiles/cmTC_66de6.dir/src.cxx.o  -o cmTC_66de6 
+/mnt/n7fs/ens/tp_cregut/GNAT/2021/bin/../libexec/gcc/x86_64-pc-linux-gnu/10.3.1/ld: CMakeFiles/cmTC_66de6.dir/src.cxx.o: in function `main':
+src.cxx:(.text+0x2e): undefined reference to `pthread_create'
+/mnt/n7fs/ens/tp_cregut/GNAT/2021/bin/../libexec/gcc/x86_64-pc-linux-gnu/10.3.1/ld: src.cxx:(.text+0x3a): undefined reference to `pthread_detach'
+/mnt/n7fs/ens/tp_cregut/GNAT/2021/bin/../libexec/gcc/x86_64-pc-linux-gnu/10.3.1/ld: src.cxx:(.text+0x4b): undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_66de6.dir/build.make:87 : cmTC_66de6] Erreur 1
+make[1] : on quitte le répertoire « /home/fzemiri/Annee_2/Rendu2/TP5/build/CMakeFiles/CMakeTmp »
+make: *** [Makefile:121 : cmTC_66de6/fast] Erreur 2
+
+
+Source file was:
+#include <pthread.h>
+
+void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/fzemiri/Annee_2/Rendu2/TP5/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_f8a46/fast && make: Avertissement : le fichier « Makefile » a une date de modification 11 s dans le futur
+/usr/bin/make -f CMakeFiles/cmTC_f8a46.dir/build.make CMakeFiles/cmTC_f8a46.dir/build
+make[1] : on entre dans le répertoire « /home/fzemiri/Annee_2/Rendu2/TP5/build/CMakeFiles/CMakeTmp »
+make[1]: Avertissement : le fichier « CMakeFiles/cmTC_f8a46.dir/flags.make » a une date de modification 11 s dans le futur
+Building CXX object CMakeFiles/cmTC_f8a46.dir/CheckFunctionExists.cxx.o
+/mnt/n7fs/ens/tp_cregut/gnat/bin/c++    -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_f8a46.dir/CheckFunctionExists.cxx.o -c /home/fzemiri/Annee_2/Rendu2/TP5/build/CMakeFiles/CheckLibraryExists/CheckFunctionExists.cxx
+Linking CXX executable cmTC_f8a46
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f8a46.dir/link.txt --verbose=1
+/mnt/n7fs/ens/tp_cregut/gnat/bin/c++   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_f8a46.dir/CheckFunctionExists.cxx.o  -o cmTC_f8a46  -lpthreads 
+/mnt/n7fs/ens/tp_cregut/GNAT/2021/bin/../libexec/gcc/x86_64-pc-linux-gnu/10.3.1/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_f8a46.dir/build.make:87 : cmTC_f8a46] Erreur 1
+make[1] : on quitte le répertoire « /home/fzemiri/Annee_2/Rendu2/TP5/build/CMakeFiles/CMakeTmp »
+make: *** [Makefile:121 : cmTC_f8a46/fast] Erreur 2
+
+
+

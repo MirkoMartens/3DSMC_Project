@@ -1,0 +1,2 @@
+"/mnt/n7fs/ens/tp_cregut/gnat/bin/gcc-ar" cr libfoo.a  CMakeFiles/foo.dir/foo.cpp.o
+"/mnt/n7fs/ens/tp_cregut/gnat/bin/gcc-ranlib" libfoo.a

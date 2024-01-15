@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/fzemiri/Annee_2/Rendu2/rendu2/TP1/tp1ogl-v2023.1.0-rc1/helloteapot2.cpp
+stdlib.h
+-
+cmath
+-
+OpenGL/gl.h
+-
+OpenGL/glu.h
+-
+GLUT/glut.h
+-
+windows.h
+-
+GL/gl.h
+-
+GL/glu.h
+-
+GL/freeglut.h
+-
+

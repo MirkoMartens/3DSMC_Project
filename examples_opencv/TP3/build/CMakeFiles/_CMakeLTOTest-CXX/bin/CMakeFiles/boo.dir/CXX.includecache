@@ -1,0 +1,10 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/fzemiri/Annee_2/Rendu2/rendu2/TP3/build/CMakeFiles/_CMakeLTOTest-CXX/src/main.cpp
+
