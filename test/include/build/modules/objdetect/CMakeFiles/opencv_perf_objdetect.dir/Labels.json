@@ -1,0 +1,78 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/modules/objdetect/perf/opencl/perf_cascades.cpp",
+			"labels" : 
+			[
+				"Main",
+				"opencv_objdetect",
+				"PerfTest"
+			]
+		},
+		{
+			"file" : "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/modules/objdetect/perf/opencl/perf_hogdetect.cpp",
+			"labels" : 
+			[
+				"Main",
+				"opencv_objdetect",
+				"PerfTest"
+			]
+		},
+		{
+			"file" : "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/modules/objdetect/perf/perf_aruco.cpp",
+			"labels" : 
+			[
+				"Main",
+				"opencv_objdetect",
+				"PerfTest"
+			]
+		},
+		{
+			"file" : "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/modules/objdetect/perf/perf_barcode.cpp",
+			"labels" : 
+			[
+				"Main",
+				"opencv_objdetect",
+				"PerfTest"
+			]
+		},
+		{
+			"file" : "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/modules/objdetect/perf/perf_main.cpp",
+			"labels" : 
+			[
+				"Main",
+				"opencv_objdetect",
+				"PerfTest"
+			]
+		},
+		{
+			"file" : "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/modules/objdetect/perf/perf_qrcode_pipeline.cpp",
+			"labels" : 
+			[
+				"Main",
+				"opencv_objdetect",
+				"PerfTest"
+			]
+		},
+		{
+			"file" : "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/modules/objdetect/perf/perf_precomp.hpp",
+			"labels" : 
+			[
+				"Main",
+				"opencv_objdetect",
+				"PerfTest"
+			]
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"Main",
+			"opencv_objdetect",
+			"PerfTest"
+		],
+		"name" : "opencv_perf_objdetect"
+	}
+}

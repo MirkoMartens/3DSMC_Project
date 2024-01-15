@@ -1,0 +1,42 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/modules/highgui/test/test_gui.cpp",
+			"labels" : 
+			[
+				"Main",
+				"opencv_highgui",
+				"AccuracyTest"
+			]
+		},
+		{
+			"file" : "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/modules/highgui/test/test_main.cpp",
+			"labels" : 
+			[
+				"Main",
+				"opencv_highgui",
+				"AccuracyTest"
+			]
+		},
+		{
+			"file" : "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/modules/highgui/test/test_precomp.hpp",
+			"labels" : 
+			[
+				"Main",
+				"opencv_highgui",
+				"AccuracyTest"
+			]
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"Main",
+			"opencv_highgui",
+			"AccuracyTest"
+		],
+		"name" : "opencv_test_highgui"
+	}
+}

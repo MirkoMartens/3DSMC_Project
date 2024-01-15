@@ -1,0 +1,551 @@
+#use_cache "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/.cache"
+#do_unpack "ippicv_2021.10.0_lnx_intel64_20230919_general.tgz" "606a19b207ebedfe42d59fd916cc4850" "https://raw.githubusercontent.com/opencv/opencv_3rdparty/0cc4aa06bf2bef4b05d237c69a5a96b9cd0cb85a/ippicv/ippicv_2021.10.0_lnx_intel64_20230919_general.tgz" "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/build/3rdparty/ippicv"
+#cmake_download "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/.cache/ippicv/606a19b207ebedfe42d59fd916cc4850-ippicv_2021.10.0_lnx_intel64_20230919_general.tgz" "https://raw.githubusercontent.com/opencv/opencv_3rdparty/0cc4aa06bf2bef4b05d237c69a5a96b9cd0cb85a/ippicv/ippicv_2021.10.0_lnx_intel64_20230919_general.tgz"
+#try 1
+#check_md5 "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/.cache/ippicv/606a19b207ebedfe42d59fd916cc4850-ippicv_2021.10.0_lnx_intel64_20230919_general.tgz"
+#mkdir "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/build/3rdparty/ippicv"
+#unpack "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/build/3rdparty/ippicv" "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/.cache/ippicv/606a19b207ebedfe42d59fd916cc4850-ippicv_2021.10.0_lnx_intel64_20230919_general.tgz"
+#do_unpack "v0.1.2d.zip" "dbb095a8bf3008e91edbbf45d8d34885" "https://github.com/opencv/ade/archive/v0.1.2d.zip" "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/build/3rdparty/ade"
+#cmake_download "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/.cache/ade/dbb095a8bf3008e91edbbf45d8d34885-v0.1.2d.zip" "https://github.com/opencv/ade/archive/v0.1.2d.zip"
+#try 1
+# Host github.com:443 was resolved.
+# IPv6: (none)
+# IPv4: 140.82.121.3
+#   Trying 140.82.121.3:443...
+# Connected to github.com (140.82.121.3) port 443
+# ALPN: curl offers h2,http/1.1
+# [5 bytes data]
+# TLSv1.3 (OUT), TLS handshake, Client hello (1):
+# [512 bytes data]
+# [5 bytes data]
+# TLSv1.3 (IN), TLS handshake, Server hello (2):
+# [122 bytes data]
+# [5 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+# [19 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (IN), TLS handshake, Certificate (11):
+# [2459 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (IN), TLS handshake, CERT verify (15):
+# [79 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (IN), TLS handshake, Finished (20):
+# [36 bytes data]
+# [5 bytes data]
+# TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (OUT), TLS handshake, Finished (20):
+# [36 bytes data]
+# SSL connection using TLSv1.3 / TLS_AES_128_GCM_SHA256 / X25519 / id-ecPublicKey
+# ALPN: server accepted h2
+# Server certificate:
+#  subject: C=US; ST=California; L=San Francisco; O=GitHub, Inc.; CN=github.com
+#  start date: Feb 14 00:00:00 2023 GMT
+#  expire date: Mar 14 23:59:59 2024 GMT
+#  subjectAltName: host "github.com" matched cert's "github.com"
+#  issuer: C=US; O=DigiCert Inc; CN=DigiCert TLS Hybrid ECC SHA384 2020 CA1
+#  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+#   Certificate level 0: Public key type EC/prime256v1 (256/128 Bits/secBits), signed using ecdsa-with-SHA384
+#   Certificate level 1: Public key type EC/secp384r1 (384/192 Bits/secBits), signed using sha384WithRSAEncryption
+# [5 bytes data]
+# [1 bytes data]
+# using HTTP/2
+# [HTTP/2] [1] OPENED stream for https://github.com/opencv/ade/archive/v0.1.2d.zip
+# [HTTP/2] [1] [:method: GET]
+# [HTTP/2] [1] [:scheme: https]
+# [HTTP/2] [1] [:authority: github.com]
+# [HTTP/2] [1] [:path: /opencv/ade/archive/v0.1.2d.zip]
+# [HTTP/2] [1] [user-agent: curl/8.5.0]
+# [HTTP/2] [1] [accept: */*]
+# [5 bytes data]
+# [1 bytes data]
+# GET /opencv/ade/archive/v0.1.2d.zip HTTP/2
+# Host: github.com
+# User-Agent: curl/8.5.0
+# Accept: */*
+# 
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+# [57 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+# [57 bytes data]
+# old SSL session ID is stale, removing
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# HTTP/2 302 
+# server: GitHub.com
+# date: Mon, 15 Jan 2024 09:45:36 GMT
+# content-type: text/html; charset=utf-8
+# vary: X-PJAX, X-PJAX-Container, Turbo-Visit, Turbo-Frame, Accept-Encoding, Accept, X-Requested-With
+# location: https://codeload.github.com/opencv/ade/zip/refs/tags/v0.1.2d
+# cache-control: max-age=0, private
+# strict-transport-security: max-age=31536000; includeSubdomains; preload
+# x-frame-options: deny
+# x-content-type-options: nosniff
+# x-xss-protection: 0
+# referrer-policy: no-referrer-when-downgrade
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# content-security-policy: default-src 'none'; base-uri 'self'; child-src github.com/assets-cdn/worker/ gist.github.com/assets-cdn/worker/; connect-src 'self' uploads.github.com www.githubstatus.com collector.github.com raw.githubusercontent.com api.github.com github-cloud.s3.amazonaws.com github-production-repository-file-5c1aeb.s3.amazonaws.com github-production-upload-manifest-file-7fdce7.s3.amazonaws.com github-production-user-asset-6210df.s3.amazonaws.com cdn.optimizely.com logx.optimizely.com/v1/events api.githubcopilot.com objects-origin.githubusercontent.com *.actions.githubusercontent.com wss://*.actions.githubusercontent.com productionresultssa0.blob.core.windows.net/ productionresultssa1.blob.core.windows.net/ productionresultssa2.blob.core.windows.net/ productionresultssa3.blob.core.windows.net/ productionresultssa4.blob.core.windows.net/ productionresultssa5.blob.core.windows.net/ productionresultssa6.blob.core.windows.net/ productionresultssa7.blob.core.windows.net/ productionresultssa8.blob.core.windows.net/ productionresultssa9.blob.core.windows.net/ github-production-repository-image-32fea6.s3.amazonaws.com github-production-release-asset-2e65be.s3.amazonaws.com insights.github.com wss://alive.github.com; font-src github.githubassets.com; form-action 'self' github.com gist.github.com objects-origin.githubusercontent.com; frame-ancestors 'none'; frame-src viewscreen.githubusercontent.com notebooks.githubusercontent.com support.github.com; img-src 'self' data: github.githubassets.com media.githubusercontent.com camo.githubusercontent.com identicons.github.com avatars.githubusercontent.com github-cloud.s3.amazonaws.com objects.githubusercontent.com secured-user-images.githubusercontent.com/ user-images.githubusercontent.com/ private-user-images.githubusercontent.com opengraph.githubassets.com github-production-user-asset-6210df.s3.amazonaws.com customer-stories-feed.github.com spotlights-feed.github.com objects-origin.githubusercontent.com *.githubusercontent.com; manifest-src 'self'; media-src github.com user-images.githubusercontent.com/ secured-user-images.githubusercontent.com/ private-user-images.githubusercontent.com github-production-user-asset-6210df.s3.amazonaws.com gist.github.com; script-src github.githubassets.com; style-src 'unsafe-inline' github.githubassets.com; upgrade-insecure-requests; worker-src github.com/assets-cdn/worker/ gist.github.com/assets-cdn/worker/
+# content-length: 0
+# x-github-request-id: 319F:30BE66:2CC16B1:2D748AE:65A4FED8
+# 
+# Connection #0 to host github.com left intact
+# Issue another request to this URL: 'https://codeload.github.com/opencv/ade/zip/refs/tags/v0.1.2d'
+# Host codeload.github.com:443 was resolved.
+# IPv6: (none)
+# IPv4: 140.82.121.9
+#   Trying 140.82.121.9:443...
+# Connected to codeload.github.com (140.82.121.9) port 443
+# ALPN: curl offers h2,http/1.1
+# [5 bytes data]
+# TLSv1.3 (OUT), TLS handshake, Client hello (1):
+# [512 bytes data]
+# [5 bytes data]
+# TLSv1.3 (IN), TLS handshake, Server hello (2):
+# [122 bytes data]
+# [5 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+# [19 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (IN), TLS handshake, Certificate (11):
+# [2458 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (IN), TLS handshake, CERT verify (15):
+# [79 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (IN), TLS handshake, Finished (20):
+# [36 bytes data]
+# [5 bytes data]
+# TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (OUT), TLS handshake, Finished (20):
+# [36 bytes data]
+# SSL connection using TLSv1.3 / TLS_AES_128_GCM_SHA256 / X25519 / id-ecPublicKey
+# ALPN: server accepted h2
+# Server certificate:
+#  subject: C=US; ST=California; L=San Francisco; O=GitHub, Inc.; CN=*.github.com
+#  start date: Feb 16 00:00:00 2023 GMT
+#  expire date: Mar 15 23:59:59 2024 GMT
+#  subjectAltName: host "codeload.github.com" matched cert's "*.github.com"
+#  issuer: C=US; O=DigiCert Inc; CN=DigiCert TLS Hybrid ECC SHA384 2020 CA1
+#  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+#   Certificate level 0: Public key type EC/prime256v1 (256/128 Bits/secBits), signed using ecdsa-with-SHA384
+#   Certificate level 1: Public key type EC/secp384r1 (384/192 Bits/secBits), signed using sha384WithRSAEncryption
+# [5 bytes data]
+# [1 bytes data]
+# using HTTP/2
+# [HTTP/2] [1] OPENED stream for https://codeload.github.com/opencv/ade/zip/refs/tags/v0.1.2d
+# [HTTP/2] [1] [:method: GET]
+# [HTTP/2] [1] [:scheme: https]
+# [HTTP/2] [1] [:authority: codeload.github.com]
+# [HTTP/2] [1] [:path: /opencv/ade/zip/refs/tags/v0.1.2d]
+# [HTTP/2] [1] [user-agent: curl/8.5.0]
+# [HTTP/2] [1] [accept: */*]
+# [5 bytes data]
+# [1 bytes data]
+# GET /opencv/ade/zip/refs/tags/v0.1.2d HTTP/2
+# Host: codeload.github.com
+# User-Agent: curl/8.5.0
+# Accept: */*
+# 
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+# [57 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+# [57 bytes data]
+# old SSL session ID is stale, removing
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# HTTP/2 200 
+# access-control-allow-origin: https://render.githubusercontent.com
+# content-disposition: attachment; filename=ade-0.1.2d.zip
+# content-length: 168110
+# content-security-policy: default-src 'none'; style-src 'unsafe-inline'; sandbox
+# content-type: application/zip
+# cross-origin-resource-policy: cross-origin
+# etag: "aa49c93bf852a0db1614aaa500e0ca76bbcc6785e3ae244dcbb667b6b231447d"
+# strict-transport-security: max-age=31536000
+# vary: Authorization,Accept-Encoding,Origin
+# x-content-type-options: nosniff
+# x-frame-options: deny
+# x-xss-protection: 1; mode=block
+# date: Mon, 15 Jan 2024 09:46:00 GMT
+# x-github-request-id: 3165:30BD24:1399EA:1798C7:65A4FED8
+# 
+# [6311 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [4110 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [4593 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [2731 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1323 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1361 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [2740 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [4110 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [5424 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [4110 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [2740 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [4054 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [890 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1361 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [4110 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [4054 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [2740 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1548 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [4101 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1323 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1361 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1323 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1361 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [2740 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [4110 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1323 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [2731 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1370 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [2740 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [2740 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [2740 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1323 bytes data]
+# [1 bytes data]
+# [5 bytes data]
+# [1 bytes data]
+# [1794 bytes data]
+# Connection #1 to host codeload.github.com left intact
+# 
+
+#check_md5 "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/.cache/ade/dbb095a8bf3008e91edbbf45d8d34885-v0.1.2d.zip"
+#mkdir "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/build/3rdparty/ade"
+#unpack "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/build/3rdparty/ade" "/home/jeanjean/Documents/3dProject/3DSMC_Project/test/include/opencv-4.9.0/.cache/ade/dbb095a8bf3008e91edbbf45d8d34885-v0.1.2d.zip"
