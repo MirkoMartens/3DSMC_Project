@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/helloteapot2.dir/helloteapot2.cpp.o  -o helloteapot2  /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libGLU.so /usr/lib/x86_64-linux-gnu/libglut.so /usr/lib/x86_64-linux-gnu/libXmu.so /usr/lib/x86_64-linux-gnu/libXi.so /usr/lib/x86_64-linux-gnu/libGL.so 

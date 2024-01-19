@@ -1,4 +1,0 @@
-/home/fzemiri/Annee_2/Rendu2/TP5/build/CMakeFiles/rebuild_cache.dir
-/home/fzemiri/Annee_2/Rendu2/TP5/build/CMakeFiles/edit_cache.dir
-/home/fzemiri/Annee_2/Rendu2/TP5/build/CMakeFiles/visualizer.dir
-/home/fzemiri/Annee_2/Rendu2/TP5/build/CMakeFiles/renderer.dir
