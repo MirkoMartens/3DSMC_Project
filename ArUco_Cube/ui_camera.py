@@ -17,10 +17,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtMultimediaWidgets import QVideoWidget
-from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QLabel,
-    QMainWindow, QMenu, QMenuBar, QPushButton,
-    QSizePolicy, QSlider, QSpacerItem, QStackedWidget,
-    QStatusBar, QTabWidget, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout,
+    QLabel, QMainWindow, QMenu, QMenuBar,
+    QPushButton, QSizePolicy, QSlider, QSpacerItem,
+    QStackedWidget, QStatusBar, QWidget)
 
 class Ui_Camera(object):
     def setupUi(self, Camera):
@@ -41,50 +41,6 @@ class Ui_Camera(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout_3 = QGridLayout(self.centralwidget)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.captureWidget = QTabWidget(self.centralwidget)
-        self.captureWidget.setObjectName(u"captureWidget")
-        self.tab_2 = QWidget()
-        self.tab_2.setObjectName(u"tab_2")
-        self.gridLayout = QGridLayout(self.tab_2)
-        self.gridLayout.setObjectName(u"gridLayout")
-        self.verticalSpacer_2 = QSpacerItem(20, 161, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.gridLayout.addItem(self.verticalSpacer_2, 3, 0, 1, 1)
-
-        self.takeImageButton = QPushButton(self.tab_2)
-        self.takeImageButton.setObjectName(u"takeImageButton")
-        self.takeImageButton.setEnabled(False)
-
-        self.gridLayout.addWidget(self.takeImageButton, 0, 0, 1, 1)
-
-        self.exposureCompensation = QSlider(self.tab_2)
-        self.exposureCompensation.setObjectName(u"exposureCompensation")
-        self.exposureCompensation.setMinimum(-4)
-        self.exposureCompensation.setMaximum(4)
-        self.exposureCompensation.setPageStep(2)
-        self.exposureCompensation.setOrientation(Qt.Horizontal)
-        self.exposureCompensation.setTickPosition(QSlider.TicksAbove)
-
-        self.gridLayout.addWidget(self.exposureCompensation, 5, 0, 1, 1)
-
-        self.label = QLabel(self.tab_2)
-        self.label.setObjectName(u"label")
-
-        self.gridLayout.addWidget(self.label, 4, 0, 1, 1)
-
-        self.captureWidget.addTab(self.tab_2, "")
-        self.tab = QWidget()
-        self.tab.setObjectName(u"tab")
-        self.gridLayout_2 = QGridLayout(self.tab)
-        self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.verticalSpacer = QSpacerItem(20, 76, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.gridLayout_2.addItem(self.verticalSpacer, 0, 0, 1, 1)
-
-        self.captureWidget.addTab(self.tab, "")
-
-        self.gridLayout_3.addWidget(self.captureWidget, 1, 1, 1, 2)
-
         self.stackedWidget = QStackedWidget(self.centralwidget)
         self.stackedWidget.setObjectName(u"stackedWidget")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -133,6 +89,70 @@ class Ui_Camera(object):
 
         self.gridLayout_3.addWidget(self.stackedWidget, 0, 0, 2, 1)
 
+        self.captureWidget = QStackedWidget(self.centralwidget)
+        self.captureWidget.setObjectName(u"captureWidget")
+        self.captureWidgetPage1 = QWidget()
+        self.captureWidgetPage1.setObjectName(u"captureWidgetPage1")
+        self.gridLayout = QGridLayout(self.captureWidgetPage1)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.gameButton_2 = QPushButton(self.captureWidgetPage1)
+        self.gameButton_2.setObjectName(u"gameButton_2")
+
+        self.gridLayout.addWidget(self.gameButton_2, 2, 0, 1, 1)
+
+        self.takeImageButton = QPushButton(self.captureWidgetPage1)
+        self.takeImageButton.setObjectName(u"takeImageButton")
+        self.takeImageButton.setEnabled(False)
+
+        self.gridLayout.addWidget(self.takeImageButton, 0, 0, 1, 1)
+
+        self.label = QLabel(self.captureWidgetPage1)
+        self.label.setObjectName(u"label")
+
+        self.gridLayout.addWidget(self.label, 6, 0, 1, 1)
+
+        self.verticalSpacer_2 = QSpacerItem(20, 161, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.gridLayout.addItem(self.verticalSpacer_2, 5, 0, 1, 1)
+
+        self.gameButton_1 = QPushButton(self.captureWidgetPage1)
+        self.gameButton_1.setObjectName(u"gameButton_1")
+
+        self.gridLayout.addWidget(self.gameButton_1, 1, 0, 1, 1)
+
+        self.trackingCheckBox = QCheckBox(self.captureWidgetPage1)
+        self.trackingCheckBox.setObjectName(u"trackingCheckBox")
+
+        self.gridLayout.addWidget(self.trackingCheckBox, 3, 0, 1, 1)
+
+        self.exposureCompensation = QSlider(self.captureWidgetPage1)
+        self.exposureCompensation.setObjectName(u"exposureCompensation")
+        self.exposureCompensation.setMinimum(-4)
+        self.exposureCompensation.setMaximum(4)
+        self.exposureCompensation.setPageStep(2)
+        self.exposureCompensation.setOrientation(Qt.Horizontal)
+        self.exposureCompensation.setTickPosition(QSlider.TicksAbove)
+
+        self.gridLayout.addWidget(self.exposureCompensation, 7, 0, 1, 1)
+
+        self.statsCheckBox = QCheckBox(self.captureWidgetPage1)
+        self.statsCheckBox.setObjectName(u"statsCheckBox")
+
+        self.gridLayout.addWidget(self.statsCheckBox, 4, 0, 1, 1)
+
+        self.captureWidget.addWidget(self.captureWidgetPage1)
+        self.captureWidgetPage2 = QWidget()
+        self.captureWidgetPage2.setObjectName(u"captureWidgetPage2")
+        self.gridLayout_2 = QGridLayout(self.captureWidgetPage2)
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.verticalSpacer = QSpacerItem(20, 76, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.gridLayout_2.addItem(self.verticalSpacer, 0, 0, 1, 1)
+
+        self.captureWidget.addWidget(self.captureWidgetPage2)
+
+        self.gridLayout_3.addWidget(self.captureWidget, 1, 1, 1, 2)
+
         Camera.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(Camera)
         self.menubar.setObjectName(u"menubar")
@@ -161,13 +181,10 @@ class Ui_Camera(object):
 
         self.retranslateUi(Camera)
         self.actionExit.triggered.connect(Camera.close)
-        self.takeImageButton.clicked.connect(Camera.takeImage)
-        self.exposureCompensation.valueChanged.connect(Camera.setExposureCompensation)
         self.actionSettings.triggered.connect(Camera.configureCaptureSettings)
         self.actionStartCamera.triggered.connect(Camera.startCamera)
         self.actionStopCamera.triggered.connect(Camera.stopCamera)
 
-        self.captureWidget.setCurrentIndex(0)
         self.stackedWidget.setCurrentIndex(0)
 
 
@@ -184,11 +201,13 @@ class Ui_Camera(object):
         self.actionStopCamera.setText(QCoreApplication.translate("Camera", u"Stop Camera", None))
         self.actionSettings.setText(QCoreApplication.translate("Camera", u"Change Settings", None))
         self.actionAbout_Qt.setText(QCoreApplication.translate("Camera", u"About Qt", None))
+        self.lastImagePreviewLabel.setText("")
+        self.gameButton_2.setText(QCoreApplication.translate("Camera", u"Start Game 2", None))
         self.takeImageButton.setText(QCoreApplication.translate("Camera", u"Capture Photo", None))
         self.label.setText(QCoreApplication.translate("Camera", u"Exposure Compensation:", None))
-        self.captureWidget.setTabText(self.captureWidget.indexOf(self.tab_2), QCoreApplication.translate("Camera", u"Image", None))
-        self.captureWidget.setTabText(self.captureWidget.indexOf(self.tab), QCoreApplication.translate("Camera", u"Morph", None))
-        self.lastImagePreviewLabel.setText("")
+        self.gameButton_1.setText(QCoreApplication.translate("Camera", u"Start Game 1", None))
+        self.trackingCheckBox.setText(QCoreApplication.translate("Camera", u"Display Tracking", None))
+        self.statsCheckBox.setText(QCoreApplication.translate("Camera", u"Display Stats", None))
         self.menuFile.setTitle(QCoreApplication.translate("Camera", u"File", None))
         self.menuDevices.setTitle(QCoreApplication.translate("Camera", u"Devices", None))
         self.menuHelp.setTitle(QCoreApplication.translate("Camera", u"Help", None))
