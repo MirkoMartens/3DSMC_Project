@@ -3,18 +3,25 @@
 
 import os
 from pathlib import Path
+import time
 
 from PySide6.QtMultimedia import (QAudioInput, QCamera, QCameraDevice,
                                   QImageCapture, QMediaCaptureSession,
                                   QMediaDevices, QMediaMetaData,
                                   QMediaRecorder)
 from PySide6.QtWidgets import QDialog, QMainWindow, QMessageBox, QApplication as qApp
-from PySide6.QtGui import QAction, QActionGroup, QIcon, QImage, QPixmap
-from PySide6.QtCore import QDateTime, QDir, QTimer, Qt, Slot, qWarning
-
+from PySide6.QtGui import QAction, QActionGroup, QIcon, QImage, QPixmap, QPainter, QFont, QColor
+from PySide6.QtCore import QDateTime, QDir, QTimer, Qt, Slot, qWarning,QRect
+from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout,
+    QLabel, QMainWindow, QMenu, QMenuBar,
+    QPushButton, QSizePolicy, QSlider, QSpacerItem,
+    QStackedWidget, QStatusBar, QWidget)
 from metadatadialog import MetaDataDialog
+from PySide6.QtMultimediaWidgets import QVideoWidget
 from imagesettings import ImageSettings
 from videosettings import VideoSettings
+from CustomVideoWidget import CustomVideoWidget
+from PySide6.QtWidgets import QMainWindow, QApplication
 
 from ui_camera import Ui_Camera
 # ArUco Imports
@@ -54,7 +61,10 @@ class Camera(QMainWindow):
         self.readyForCapture(False)
 
         # try to actually initialize camera & mic
+
         self.initialize()
+
+
 
     @Slot()
     def initialize(self):
@@ -94,7 +104,9 @@ class Camera(QMainWindow):
             self.m_imageCapture = QImageCapture()
             self.m_captureSession.setImageCapture(self.m_imageCapture)
             self.m_imageCapture.readyForCaptureChanged.connect(self.readyForCapture)
-            self.m_imageCapture.imageCaptured.connect(self.processCapturedImage)
+            self.m_captureSession.setImageCapture(self.m_imageCapture)
+            #self.m_imageCapture.imageCaptured.connect(self.processCapturedImage)
+            self.m_imageCapture.imageCaptured.connect(self.imageCapturedText)
             self.m_imageCapture.imageSaved.connect(self.imageSaved)
             self.m_imageCapture.errorOccurred.connect(self.displayCaptureError)
 
@@ -103,11 +115,15 @@ class Camera(QMainWindow):
         self.updateCameraActive(self.m_camera.isActive())
         #self.updateRecorderState(self.m_mediaRecorder.recorderState())
         self.readyForCapture(self.m_imageCapture.isReadyForCapture())
-
         self.updateCaptureMode()
-
         self.m_camera.start()
-
+         # Create a QTimer to trigger the capture at regular intervals (e.g., every second)
+        self.loop = True
+        self.count = 0
+        self.timer = QTimer(self.m_camera)
+        self.timer.timeout.connect(self.captureFrameLoop)
+        self.timer.start(20) 
+        
     def keyPressEvent(self, event):
         if event.isAutoRepeat():
             return
@@ -128,6 +144,56 @@ class Camera(QMainWindow):
             event.accept()
         else:
             super().keyPressEvent(event)
+     
+    @Slot()
+    def captureFrameLoop(self):
+        # Slot to handle frame capture
+        if (self.loop):
+            self.m_imageCapture.capture() 
+            self.count +=1
+        if (self.count > 500):
+            self.loop =False
+            
+    @Slot()
+    def imageCapturedText(self, requestId, image):
+        # Slot to handle captured images
+        # Add text to the image
+        scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio,
+                                  Qt.SmoothTransformation)
+        image_with_text = self.addTextToImage(scaled_image, "Hello, World!")
+
+        # Display the modified image
+        self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image_with_text))
+
+        # Display captured image for 4 seconds.
+        self.displayCapturedImage()
+        
+    @Slot()
+    def addTextToImage(self, image, text):
+        # Create a QPixmap from the QImage
+        pixmap = QPixmap.fromImage(image)
+
+        # Create a QPainter to draw on the image
+        painter = QPainter(pixmap)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        # Set font and color for the overlay text
+        font = QFont("Arial", 16)
+        color = QColor("white")
+        painter.setFont(font)
+        painter.setPen(color)
+
+        # Draw the overlay text at the bottom of the image
+        painter.drawText(pixmap.rect(), Qt.AlignTop| Qt.AlignHCenter, text)
+
+        # End painting
+        painter.end()
+
+        # Convert the QPixmap back to a QImage
+        modified_image = pixmap.toImage()
+
+        return modified_image
+
 
     @Slot()
     def updateRecordTime(self):
@@ -143,6 +209,7 @@ class Camera(QMainWindow):
 
         # Display captured image for 4 seconds.
         self.displayCapturedImage()
+        
         QTimer.singleShot(4000, self.displayViewfinder)
 
     @Slot()
@@ -190,7 +257,7 @@ class Camera(QMainWindow):
 
     @Slot(int, QImageCapture.Error, str)
     def displayCaptureError(self, id, error, errorString):
-        QMessageBox.warning(self, "Image Capture Error", errorString)
+        #QMessageBox.warning(self, "Image Capture Error", errorString)
         self.m_isCapturingImage = False
 
     @Slot()
