@@ -8,6 +8,8 @@ import sys
 from PySide6.QtWidgets import QApplication
 
 from camera import Camera
+from pathlib import Path
+import cv2
 
 
 if __name__ == "__main__":
