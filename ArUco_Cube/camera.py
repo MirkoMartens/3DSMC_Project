@@ -52,7 +52,7 @@ class Camera(QMainWindow):
 
         self._ui = Ui_Camera()
         self._ui.setupUi(self)
-        image = Path(__file__).parent / "shutter.svg"
+        image = os.path.join(Path(__file__).parent, "shutter.svg")
         self._ui.takeImageButton.setIcon(QIcon(os.fspath(image)))
         self._ui.actionAbout_Qt.triggered.connect(qApp.aboutQt)
 
@@ -105,7 +105,7 @@ class Camera(QMainWindow):
             self.m_captureSession.setImageCapture(self.m_imageCapture)
             self.m_imageCapture.readyForCaptureChanged.connect(self.readyForCapture)
             self.m_captureSession.setImageCapture(self.m_imageCapture)
-            #self.m_imageCapture.imageCaptured.connect(self.processCapturedImage)
+            self.m_imageCapture.imageCaptured.connect(self.processCapturedImage)
             self.m_imageCapture.imageCaptured.connect(self.imageCapturedText)
             self.m_imageCapture.imageSaved.connect(self.imageSaved)
             self.m_imageCapture.errorOccurred.connect(self.displayCaptureError)
@@ -118,11 +118,18 @@ class Camera(QMainWindow):
         self.updateCaptureMode()
         self.m_camera.start()
          # Create a QTimer to trigger the capture at regular intervals (e.g., every second)
-        self.loop = True
-        self.count = 0
-        self.timer = QTimer(self.m_camera)
+        self.loop = False
+        # Define the calibration varibales
+        self.calibration = False
+        self.countCalibrate = 1
+        # Define the number of photos that you want
+        self.numPhotosCalibrate = 10
+        # Define the delay between each photo
+        self.delayPhotos = 1000
+        """self.timer = QTimer(self.m_camera)
         self.timer.timeout.connect(self.captureFrameLoop)
         self.timer.start(20) 
+        """
         
     def keyPressEvent(self, event):
         if event.isAutoRepeat():
@@ -148,25 +155,28 @@ class Camera(QMainWindow):
     @Slot()
     def captureFrameLoop(self):
         # Slot to handle frame capture
-        if (self.loop):
-            self.m_imageCapture.capture() 
-            self.count +=1
-        if (self.count > 500):
-            self.loop =False
+        if (not self.loop):
+            self.loop= True
+            self.timerLoop =  QTimer(self.m_camera)
+            self.timerLoop.timeout.connect(self.captureFrameLoop)
+            self.timerLoop.start(20) 
+            
+        self.m_imageCapture.capture() 
             
     @Slot()
     def imageCapturedText(self, requestId, image):
         # Slot to handle captured images
         # Add text to the image
-        scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio,
-                                  Qt.SmoothTransformation)
-        image_with_text = self.addTextToImage(scaled_image, "Hello, World!")
+        if (self.loop):
+            scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio,
+                                    Qt.SmoothTransformation)
+            image_with_text = self.addTextToImage(scaled_image, "Hello, World!")
 
-        # Display the modified image
-        self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image_with_text))
+            # Display the modified image
+            self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image_with_text))
 
-        # Display captured image for 4 seconds.
-        self.displayCapturedImage()
+            # Display captured image for 4 seconds.
+            self.displayCapturedImage()
         
     @Slot()
     def addTextToImage(self, image, text):
@@ -196,21 +206,30 @@ class Camera(QMainWindow):
 
 
     @Slot()
+    def calibrate(self):
+        self.calibration = True
+        self.timer = QTimer(self.m_camera)
+        self.timer.timeout.connect(self.takeImage)
+        # Define the time to take x photos in miliseconds
+        self.timer.start(self.delayPhotos) 
+
+    @Slot()
     def updateRecordTime(self):
         d = self.m_mediaRecorder.duration() / 1000
         self._ui.statusbar.showMessage(f"Recorded {d} sec")
 
     @Slot(int, QImage)
     def processCapturedImage(self, requestId, img):
-        scaled_image = img.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio,
-                                  Qt.SmoothTransformation)
+        if self.m_isCapturingImage:
+            scaled_image = img.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio,
+                                    Qt.SmoothTransformation)
 
-        self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(scaled_image))
+            self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(scaled_image))
 
-        # Display captured image for 4 seconds.
-        self.displayCapturedImage()
-        
-        QTimer.singleShot(4000, self.displayViewfinder)
+            # Display captured image for 4 seconds.
+            self.displayCapturedImage()
+            
+            QTimer.singleShot(4000, self.displayViewfinder)
 
     @Slot()
     def configureCaptureSettings(self):
@@ -254,6 +273,14 @@ class Camera(QMainWindow):
     def takeImage(self):
         self.m_isCapturingImage = True
         self.m_imageCapture.captureToFile(os.path.join(os.path.dirname(__file__), "images"))
+        if (self.calibration and self.countCalibrate < self.numPhotosCalibrate):
+            # Define the time to sleep before taking the next picture
+            self.countCalibrate +=1
+        elif (self.calibrate ):
+            self.timer.stop()
+            self.m_isCapturingImage = False
+            self.countCalibrate = 0
+            self.displayViewfinder()
 
     @Slot(int, QImageCapture.Error, str)
     def displayCaptureError(self, id, error, errorString):
