@@ -184,6 +184,7 @@ class Ui_Camera(object):
         self.actionSettings.triggered.connect(Camera.configureCaptureSettings)
         self.actionStartCamera.triggered.connect(Camera.startCamera)
         self.actionStopCamera.triggered.connect(Camera.stopCamera)
+        self.takeImageButton.clicked.connect(Camera.takeImage)
 
         self.stackedWidget.setCurrentIndex(0)
 

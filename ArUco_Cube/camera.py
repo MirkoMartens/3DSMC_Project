@@ -45,7 +45,7 @@ class Camera(QMainWindow):
 
         self._ui = Ui_Camera()
         self._ui.setupUi(self)
-        image = Path(__file__).parent / "shutter.svg"
+        image = os.path.join(Path(__file__).parent, "shutter.svg")
         self._ui.takeImageButton.setIcon(QIcon(os.fspath(image)))
         self._ui.actionAbout_Qt.triggered.connect(qApp.aboutQt)
 
@@ -186,6 +186,7 @@ class Camera(QMainWindow):
     @Slot()
     def takeImage(self):
         self.m_isCapturingImage = True
+        print(os.path.join(os.path.dirname(__file__), "images"))
         self.m_imageCapture.captureToFile(os.path.join(os.path.dirname(__file__), "images"))
 
     @Slot(int, QImageCapture.Error, str)
