@@ -1,0 +1,50 @@
+[
+  {
+    "question": "When was mnecraft released?",
+    "answers": ["2011", "2009", "2002"]
+  },
+  {
+    "question": "How many blocks are in a chunk?",
+    "answers": ["256", "200", "64"]
+  },
+  {
+    "question": "Which of these components is not in a Kinect.V1?",
+    "answers": ["Banana", "Color sensor", "IR depth sensor"]
+  },
+  {
+    "question": " A polygonal mesh is:",
+    "answers": ["A collection of polygons satisfying certain restrictions", "Macintosh Enhanced SCSI Hardware", "A very famous cocktail"]
+  },
+  {
+    "question": "A triangle mesh is called manifold if the intersection of two triangles is",
+    "answers": ["A common vertex", "Full", "Colorful"]
+  },
+  {
+    "question": "What is defined as sum of translated and scaled kernels and a linear polynomial?",
+    "answers": ["Radial Basis Function", "Eminem mom's spaghhetti", "Signed Distance Function"]
+  },
+  {
+    "question": "What we always need in order to obtain actual depth data?",
+    "answers": ["Two optical centers", "A dimond pickaxe", "The enchanting table"]
+  },
+  {
+    "question": "Structure from Motion:",
+    "answers": ["recover both 3D points and camera positions", "Is never gonna give you up", "Is never gonna let you down"]
+  },
+  {
+    "question": "What SLAM stands for?",
+    "answers": ["Simultaneous Localization and Mapping", "When one team in the Six Nations Championship beats all the others during one year's competition.", "A sweet jam"]
+  },
+  {
+    "question": "What yoy DON'T need to align two objects using known correspondences?",
+    "answers": ["A ruler", "Compute center of gravity of both objects", "Scale one object to match the avg. distance from all vertices to the center of gravity"]
+  },
+  {
+    "question": "",
+    "answers": ["", "", ""]
+  },
+  {
+    "question": "",
+    "answers": ["", "", ""]
+  }
+]
