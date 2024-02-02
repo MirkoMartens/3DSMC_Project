@@ -27,11 +27,12 @@ from ui_camera import Ui_Camera
 # ArUco Imports
 import numpy as np
 import cv2, PIL, os
-from cv2 import aruco
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import pandas as pd
+
+from calibration import start_calibration
 
 class Camera(QMainWindow):
     def __init__(self):
@@ -211,7 +212,12 @@ class Camera(QMainWindow):
         self.timer = QTimer(self.m_camera)
         self.timer.timeout.connect(self.takeImage)
         # Define the time to take x photos in miliseconds
-        self.timer.start(self.delayPhotos) 
+        self.timer.start(self.delayPhotos)
+        #if (self.calibration == False):
+            #ret, mtx, dist, rvecs, tvecs = start_calibration(os.path.join(os.path.dirname(__file__), "images"))
+            #print(mtx)
+            #print("nothing")
+
 
     @Slot()
     def updateRecordTime(self):

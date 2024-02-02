@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 
-datadir = "ArUco_Cube/data/"
+#datadir = "ArUco_Cube/data/"
 
 
 aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
@@ -13,12 +13,12 @@ fig = plt.figure()
 ax = fig.add_subplot(1,1,1)
 imboard = board.draw((2000, 2000))
 
-plt.imshow(imboard, cmap = mpl.cm.gray, interpolation = "nearest")
-ax.axis("off")
-plt.show()
+#plt.imshow(imboard, cmap = mpl.cm.gray, interpolation = "nearest")
+#ax.axis("off")
+#plt.show()
 
 # only in here for debugging
-images = np.array([dir + f for f in os.listdir(dir) if f.endswith(".jpg") or f.endswith(".png")])
+#images = np.array([dir + f for f in os.listdir(dir) if f.endswith(".jpg") or f.endswith(".png")])
 
 
 def read_chessboards(dir):
@@ -98,7 +98,7 @@ def start_calibration(dir):
     return calibrate_camera(all_corners,all_ids,imsize)
 
 
-ret, mtx, dist, rvecs, tvecs = start_calibration(datadir) # this is how you would call this function from outside
+#ret, mtx, dist, rvecs, tvecs = start_calibration(datadir) # this is how you would call this function from outside
 
 # TODO 1: Better images and double-check chosen parameters
 # TODO 2: 
@@ -106,7 +106,7 @@ ret, mtx, dist, rvecs, tvecs = start_calibration(datadir) # this is how you woul
 
 
 # This code here displays the distorted and the corrected images, only here for debugging
-
+"""
 i=1 # select image id
 for i in range(0, 18, 2):
     plt.figure()
@@ -121,3 +121,4 @@ for i in range(0, 18, 2):
     plt.title("Corrected image")
     plt.axis("off")
     plt.show()
+    """
