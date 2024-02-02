@@ -198,7 +198,7 @@ class Camera(QMainWindow):
             #self.aruco_param = cv2.aruco.DetectorParameters()
             #self.detector = cv2.aruco.ArucoDetector(self.aruco_dict, self.aruco_param)
 
-            self.corners, self.ids, self.rejected = self.aruco.detectMarkers(image, self.aruco_dict)
+            self.corners, self.ids, self.rejected = cv2.aruco.detectMarkers(image, self.aruco_dict)
             # show image with detected markers
             self.result = image.copy()
             cv2.aruco.drawDetectedMarkers(self.result, self.corners, self.ids)
