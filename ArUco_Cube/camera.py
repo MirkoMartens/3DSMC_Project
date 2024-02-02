@@ -26,11 +26,11 @@ from ui_camera import Ui_Camera
 # ArUco Imports
 import numpy as np
 import cv2, PIL, os
-from cv2 import aruco
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import pandas as pd
+
 
 from calibration import start_calibration
 
@@ -413,3 +413,19 @@ class Camera(QMainWindow):
                     data.insert(key, val)
 
         self.m_mediaRecorder.setMetaData(data)
+
+    @Slot()
+    def startGameOne(self):
+        self.readyForCapture(False)
+
+    @Slot()
+    def startGameTwo(self):
+        self.readyForCapture(False)
+
+    @Slot()
+    def displayTracking(self):
+        self.readyForCapture(False)
+
+    @Slot()
+    def displayStats(self):
+        self.readyForCapture(False)
