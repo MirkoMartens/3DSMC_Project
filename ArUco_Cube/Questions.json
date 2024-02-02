@@ -1,6 +1,6 @@
 [
   {
-    "question": "When was mnecraft released?",
+    "question": "When was minecraft released?",
     "answers": ["2011", "2009", "2002"]
   },
   {
@@ -21,7 +21,7 @@
   },
   {
     "question": "What is defined as sum of translated and scaled kernels and a linear polynomial?",
-    "answers": ["Radial Basis Function", "Eminem mom's spaghhetti", "Signed Distance Function"]
+    "answers": ["Radial Basis Function", "Eminem mom's spaghetti", "Signed Distance Function"]
   },
   {
     "question": "What we always need in order to obtain actual depth data?",
@@ -40,7 +40,7 @@
     "answers": ["A ruler", "Compute center of gravity of both objects", "Scale one object to match the avg. distance from all vertices to the center of gravity"]
   },
   {
-    "question": "In which year was the famous game 'The Legend of Zelda: Ocarina of Time' released?",
+    "question": "In which year was the 'famous' game 'The Legend of Zelda: Ocarina of Time' released?",
     "answers": ["1996", "1998", "2001"]
   },
   {
