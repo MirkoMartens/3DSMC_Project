@@ -1,6 +1,7 @@
 {
     "files": [
         "main.py",
+	"calibration.py",
         "camera.py",
         "camera.ui",
         "imagesettings.py",

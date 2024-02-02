@@ -81,7 +81,7 @@ def calibrate_camera(allCorners,allIds,imsize):
                       flags=flags,
                       criteria=(cv2.TERM_CRITERIA_EPS & cv2.TERM_CRITERIA_COUNT, 10000, 1e-9))
 
-    return ret, camera_matrix, distortion_coefficients0, rotation_vectors, translation_vectors
+    return ret, camera_matrix, distortion_coefficients, rotation_vectors, translation_vectors
 
 
 

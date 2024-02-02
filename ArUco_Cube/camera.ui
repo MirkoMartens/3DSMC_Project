@@ -30,6 +30,20 @@
          </widget>
         </item>
         <item row="6" column="0">
+         <widget class="QCheckBox" name="statsCheckBox">
+          <property name="text">
+           <string>Display Stats</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Exposure Compensation:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
          <spacer name="verticalSpacer_2">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -42,7 +56,7 @@
           </property>
          </spacer>
         </item>
-        <item row="8" column="0">
+        <item row="9" column="0">
          <widget class="QSlider" name="exposureCompensation">
           <property name="minimum">
            <number>-4</number>
@@ -61,20 +75,6 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="0">
-         <widget class="QCheckBox" name="statsCheckBox">
-          <property name="text">
-           <string>Display Stats</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QCheckBox" name="trackingCheckBox">
-          <property name="text">
-           <string>Display Tracking</string>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="0">
          <widget class="QPushButton" name="gameButton_2">
           <property name="text">
@@ -89,17 +89,24 @@
           </property>
          </widget>
         </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="label">
+        <item row="3" column="0">
+         <widget class="QPushButton" name="captureCalibrationButton">
           <property name="text">
-           <string>Exposure Compensation:</string>
+           <string>Capture Calibration</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="5" column="0">
+         <widget class="QCheckBox" name="trackingCheckBox">
+          <property name="text">
+           <string>Display Tracking</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
          <widget class="QPushButton" name="calibrationButton">
           <property name="text">
-           <string>Calibration</string>
+           <string>Calibrate Camera</string>
           </property>
          </widget>
         </item>
@@ -236,7 +243,7 @@
      <x>0</x>
      <y>0</y>
      <width>1132</width>
-     <height>30</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

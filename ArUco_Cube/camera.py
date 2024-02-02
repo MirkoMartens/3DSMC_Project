@@ -57,6 +57,17 @@ class Camera(QMainWindow):
         self._ui.takeImageButton.setIcon(QIcon(os.fspath(image)))
         self._ui.actionAbout_Qt.triggered.connect(qApp.aboutQt)
 
+        # create variables to store calibration variables
+        self.ret = None
+        self.camera_matrix = None
+        self.distortion_coefficients = None
+        self.rotation_vectors = None
+        self.translation_vectors = None
+
+        # create variables for CheckBox
+        self.isDisplayTracking = True
+        self.isDisplayStats = False
+
         # disable all buttons by default
         self.updateCameraActive(False)
         self.readyForCapture(False)
@@ -126,7 +137,7 @@ class Camera(QMainWindow):
         # Define the number of photos that you want
         self.numPhotosCalibrate = 10
         # Define the delay between each photo
-        self.delayPhotos = 1000
+        self.delayPhotos = 3000
         """self.timer = QTimer(self.m_camera)
         self.timer.timeout.connect(self.captureFrameLoop)
         self.timer.start(20) 
@@ -207,15 +218,15 @@ class Camera(QMainWindow):
 
 
     @Slot()
-    def calibrate(self):
-        """ self.calibration = True
+    def takeCalibrationImages(self):
+        self.calibration = True
         self.timer = QTimer(self.m_camera)
-        self.timer.timeout.connect(self.takeImage)
+        self.timer.timeout.connect(self.takeCalibrationImage)
         # Define the time to take x photos in miliseconds
-        self.timer.start(self.delayPhotos) """
-        dir = "c:/Users/mirko/Documents/Studium/Master/Semester05/3D_Mocap/3DSMC_Project/ArUco_Cube/images/"
-        #_, mtx, _, _, _ = start_calibration(os.path.join(os.path.dirname(__file__), "images"))
-        _, mtx, _, _, _ = start_calibration(dir)
+        self.timer.start(self.delayPhotos)
+
+    def calibrate(self):
+        self.ret, self.camera_matrix, self.distortion_coefficients0, self.rotation_vectors, self.translation_vectors = start_calibration(os.path.join(os.path.dirname(__file__), "images", "calibration"))
         print("CALIBRATION MATRIX: ", mtx)
 
     @Slot()
@@ -277,16 +288,21 @@ class Camera(QMainWindow):
     @Slot()
     def takeImage(self):
         self.m_isCapturingImage = True
-        print(os.path.join(os.path.dirname(__file__), "images"))
         self.m_imageCapture.captureToFile(os.path.join(os.path.dirname(__file__), "images"))
+
+    def takeCalibrationImage(self):
+        self.m_isCapturingImage = True
+        print(os.path.join(os.path.dirname(__file__), "images", "calibration"))
+        self.m_imageCapture.captureToFile(os.path.join(os.path.dirname(__file__), "images", "calibration"))
         if (self.calibration and self.countCalibrate < self.numPhotosCalibrate):
             # Define the time to sleep before taking the next picture
             self.countCalibrate +=1
-        elif (self.calibrate ):
+        elif (self.takeCalibrationImages):
             self.timer.stop()
             self.m_isCapturingImage = False
             self.countCalibrate = 0
             self.displayViewfinder()
+            self.calibration = False
 
     @Slot(int, QImageCapture.Error, str)
     def displayCaptureError(self, id, error, errorString):
@@ -424,8 +440,18 @@ class Camera(QMainWindow):
 
     @Slot()
     def displayTracking(self):
-        self.readyForCapture(False)
+        if self.isDisplayTracking:
+            self.isDisplayTracking = False
+            print("Displaying tracking")
+        else:
+            self.isDisplayTracking = True
+            print("Not displaying tracking")
 
     @Slot()
     def displayStats(self):
-        self.readyForCapture(False)
+        if self.isDisplayStats:
+            self.isDisplayStats = False
+            print("Not displaying stats")
+        else:
+            self.isDisplayStats = True
+            print("Displaying stats")
