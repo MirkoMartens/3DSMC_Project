@@ -1,6 +1,6 @@
 [
   {
-    "question": "When was mnecraft released?",
+    "question": "When was minecraft released?",
     "answers": ["2011", "2009", "2002"]
   },
   {
@@ -12,7 +12,7 @@
     "answers": ["Banana", "Color sensor", "IR depth sensor"]
   },
   {
-    "question": " A polygonal mesh is:",
+    "question": "A polygonal mesh is:",
     "answers": ["A collection of polygons satisfying certain restrictions", "Macintosh Enhanced SCSI Hardware", "A very famous cocktail"]
   },
   {
@@ -21,7 +21,7 @@
   },
   {
     "question": "What is defined as sum of translated and scaled kernels and a linear polynomial?",
-    "answers": ["Radial Basis Function", "Eminem mom's spaghhetti", "Signed Distance Function"]
+    "answers": ["Radial Basis Function", "Eminem mom's spaghetti", "Signed Distance Function"]
   },
   {
     "question": "What we always need in order to obtain actual depth data?",
@@ -36,15 +36,87 @@
     "answers": ["Simultaneous Localization and Mapping", "When one team in the Six Nations Championship beats all the others during one year's competition.", "A sweet jam"]
   },
   {
-    "question": "What yoy DON'T need to align two objects using known correspondences?",
+    "question": "What you DON'T need to align two objects using known correspondences?",
     "answers": ["A ruler", "Compute center of gravity of both objects", "Scale one object to match the avg. distance from all vertices to the center of gravity"]
   },
   {
-    "question": "",
-    "answers": ["", "", ""]
+    "question": "In which year was the 'famous' game 'The Legend of Zelda: Ocarina of Time' released?",
+    "answers": ["1996", "1998", "2001"]
   },
   {
-    "question": "",
-    "answers": ["", "", ""]
+    "question": "What is the name of the protagonist in the game 'Assasin's Creed'?",
+    "answers": ["Ezio Auditore", "Connor Kenway", "Altair Ibn-La'Ahad"]
+  },
+  {
+    "question": "Which of these games is developed by the software house CD Projekt?",
+    "answers": ["The Witcher 3: Wild Hunt", "Fallout 4", "Grand Theft Auto V"]
+  },
+  {
+    "question": "What is the main genre of the game 'League of Legends'?",
+    "answers": ["Multiplayer online battle arena (MOBA)", "First-person shooter (FPS)", "Role-playing game (RPG)"]
+  },
+  {
+    "question": "Who is the creator of the famous game 'Minecraft'?",
+    "answers": ["Markus Persson", "Hideo Kojima", "Shigeru Miyamoto"]
+  },
+  {
+    "question": "In which year was the PlayStation 4 console from Sony launched?",
+    "answers": ["2013", "2011", "2015"]
+  },
+  {
+    "question": "What is the title of the first game in the 'Final Fantasy' series?",
+    "answers": ["Final Fantasy I", "Titanic", "Nokia 3310"]
+  },
+  {
+    "question": "Which of the following is not a playable character in 'Super Smash Bros. Ultimate'?",
+    "answers": ["Mario", "Master Chief", "Donkey Kong"]
+  },
+  {
+    "question": "What is the name of the protagonist in the game 'The Elder Scrolls V: Skyrim'?",
+    "answers": ["Dovahkiin", "Geralt of Rivia", "Nathan Drake"]
+  },
+  {
+    "question": "Which game development studio created the 'Uncharted' series?",
+    "answers": ["Naughty Dog", "Rockstar Games", "Bethesda Game Studios"]
+  },
+  {
+    "question": "Which option is not a Deformation Proxy?",
+    "answers": ["Ghosts", "Cages", "Skeletons"]
+  },
+  {
+    "question": "Find the only Corrispondence Pruning Strategy",
+    "answers": ["Distance", "Sacking", "Slicing"]
+  },
+  {
+    "question": "Non-rigid Tracking is more stable with:",
+    "answers": ["More cameras", "Less cameras", "A good motivational speech"]
+  },
+  {
+    "question": "Non-rigid Reconstruction can accumulate ... if traking is wrong",
+    "answers": ["drift", "drag", "dandruff"]
+  },
+  {
+    "question": "Which is not an indipendent PCA in the Morphable Model?",
+    "answers": ["Beauty", "Identity", "Albedo"]
+  },
+  {
+    "question": "What's the name of the technique used to enhance the realism of generated 3D scans in computer vision, involving a competition between a generator and a discriminator network?",
+    "answers": ["Adversarial Loss", "Spatial Filtering", "Touching grass"]
+  },
+  {
+    "question": "Standard Skinning produces vertices from...",
+    "answers": ["Pose parameters", "T-pose", "Pole position"]
+  },
+  {
+    "question": "Best F1 team?",
+    "answers": ["Ferrari", "Wrong option", "Wrong option"]
+  },
+  {
+    "question": "If you are happy and you know it, ...",
+    "answers": ["clap your hands", "run away", "ask for help"]
+  },
+  {
+    "question": "The best project in the world is...",
+    "answers": ["This one", "Another one", "Somebody please help me I'm stuck in a quiz factory!"]
   }
 ]
