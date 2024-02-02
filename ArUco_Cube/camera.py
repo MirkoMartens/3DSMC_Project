@@ -9,14 +9,10 @@ import random
 from PySide6.QtMultimedia import (QAudioInput, QCamera, QCameraDevice,
                                   QImageCapture, QMediaCaptureSession,
                                   QMediaDevices, QMediaMetaData,
-                                  QMediaRecorder)
+                                  QMediaRecorder, QVideoFrame, QVideoSink, QMediaPlayer)
 from PySide6.QtWidgets import QDialog, QMainWindow, QMessageBox, QApplication as qApp
 from PySide6.QtGui import QAction, QActionGroup, QIcon, QImage, QPixmap, QPainter, QFont, QColor
 from PySide6.QtCore import QDateTime, QDir, QTimer, Qt, Slot, qWarning,QRect
-from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout,
-    QLabel, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QSizePolicy, QSlider, QSpacerItem,
-    QStackedWidget, QStatusBar, QWidget)
 from metadatadialog import MetaDataDialog
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from imagesettings import ImageSettings
@@ -64,6 +60,7 @@ class Camera(QMainWindow):
         self._ui.takeImageButton.setIcon(QIcon(os.fspath(image)))
         self._ui.actionAbout_Qt.triggered.connect(qApp.aboutQt)
         
+        # Create variables for questions
         self.filePath = os.path.join(Path(__file__).parent, "Questions.json")
         self.questions = Questions.Questions(self.filePath)
         self.question = None
@@ -119,6 +116,7 @@ class Camera(QMainWindow):
 
         self.m_camera.activeChanged.connect(self.updateCameraActive)
         self.m_camera.errorOccurred.connect(self.displayCameraError)
+        
 
         if not self.m_mediaRecorder:
             self.m_mediaRecorder = QMediaRecorder()
@@ -190,10 +188,10 @@ class Camera(QMainWindow):
             self.timerCount = True
             self.timerLoop.start(20) 
             
-        self.m_imageCapture.capture() 
+        self.m_imageCapture.capture()
             
     @Slot()
-    def imageCapturedText(self, requestId, image):
+    def imageCapturedText(self, request_id, image):
         # Slot to handle captured images
         # Add text to the image
         self.question = self.questions.get_question()
@@ -286,7 +284,6 @@ class Camera(QMainWindow):
                                     Qt.SmoothTransformation)
 
             self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(scaled_image))
-
             # Display captured image for 4 seconds.
             self.displayCapturedImage()
             
@@ -483,6 +480,15 @@ class Camera(QMainWindow):
     @Slot()
     def startGameTwo(self):
         self.readyForCapture(False)
+        
+    @Slot()
+    def quitGame(self):
+        self.loop = False
+        self.timerLoop.stop()
+        self.showQuestion = False
+        self.number = self.waitMax
+        self.timerCount = False
+        self.displayViewfinder()
 
     @Slot()
     def displayTracking(self):
