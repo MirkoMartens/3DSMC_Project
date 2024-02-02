@@ -314,3 +314,19 @@ class Camera(QMainWindow):
                     data.insert(key, val)
 
         self.m_mediaRecorder.setMetaData(data)
+
+    @Slot()
+    def startGameOne(self):
+        self.readyForCapture(False)
+
+    @Slot()
+    def startGameTwo(self):
+        self.readyForCapture(False)
+
+    @Slot()
+    def displayTracking(self):
+        self.readyForCapture(False)
+
+    @Slot()
+    def displayStats(self):
+        self.readyForCapture(False)
