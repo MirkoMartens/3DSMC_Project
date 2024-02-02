@@ -20,7 +20,6 @@ from metadatadialog import MetaDataDialog
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from imagesettings import ImageSettings
 from videosettings import VideoSettings
-from CustomVideoWidget import CustomVideoWidget
 from PySide6.QtWidgets import QMainWindow, QApplication
 
 from ui_camera import Ui_Camera
@@ -32,6 +31,8 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import pandas as pd
+
+from calibration import start_calibration
 
 class Camera(QMainWindow):
     def __init__(self):
@@ -207,11 +208,15 @@ class Camera(QMainWindow):
 
     @Slot()
     def calibrate(self):
-        self.calibration = True
+        """ self.calibration = True
         self.timer = QTimer(self.m_camera)
         self.timer.timeout.connect(self.takeImage)
         # Define the time to take x photos in miliseconds
-        self.timer.start(self.delayPhotos) 
+        self.timer.start(self.delayPhotos) """
+        dir = "c:/Users/mirko/Documents/Studium/Master/Semester05/3D_Mocap/3DSMC_Project/ArUco_Cube/images/"
+        #_, mtx, _, _, _ = start_calibration(os.path.join(os.path.dirname(__file__), "images"))
+        _, mtx, _, _, _ = start_calibration(dir)
+        print("CALIBRATION MATRIX: ", mtx)
 
     @Slot()
     def updateRecordTime(self):

@@ -1,10 +1,6 @@
 import numpy as np
 import cv2, os
 import matplotlib.pyplot as plt
-import matplotlib as mpl
-
-
-datadir = "ArUco_Cube/data/"
 
 
 aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
@@ -12,13 +8,6 @@ board = cv2.aruco.CharucoBoard_create(5, 7, 2.72, 1.65, aruco_dict)
 fig = plt.figure()
 ax = fig.add_subplot(1,1,1)
 imboard = board.draw((2000, 2000))
-
-plt.imshow(imboard, cmap = mpl.cm.gray, interpolation = "nearest")
-ax.axis("off")
-plt.show()
-
-# only in here for debugging
-images = np.array([dir + f for f in os.listdir(dir) if f.endswith(".jpg") or f.endswith(".png")])
 
 
 def read_chessboards(dir):
@@ -32,6 +21,11 @@ def read_chessboards(dir):
 
     images = np.array([dir + f for f in os.listdir(dir) if f.endswith(".jpg") or f.endswith(".png")])
 
+    print("Images: ", images)
+
+    if len(images) == 0:
+        print("NO IMAGES FOUND!!")
+        return None, None, None
     for im in images:
         print("=> Processing image {0}".format(im))
         frame = cv2.imread(im)
@@ -96,28 +90,3 @@ def start_calibration(dir):
 
     all_corners, all_ids, imsize = read_chessboards(dir)
     return calibrate_camera(all_corners,all_ids,imsize)
-
-
-ret, mtx, dist, rvecs, tvecs = start_calibration(datadir) # this is how you would call this function from outside
-
-# TODO 1: Better images and double-check chosen parameters
-# TODO 2: 
-
-
-
-# This code here displays the distorted and the corrected images, only here for debugging
-
-i=1 # select image id
-for i in range(0, 18, 2):
-    plt.figure()
-    frame = cv2.imread(images[i])
-    img_undist = cv2.undistort(frame,mtx,dist,None)
-    plt.subplot(1,2,1)
-    plt.imshow(frame)
-    plt.title("Raw image")
-    plt.axis("off")
-    plt.subplot(1,2,2)
-    plt.imshow(img_undist)
-    plt.title("Corrected image")
-    plt.axis("off")
-    plt.show()
