@@ -4,6 +4,7 @@
 import os
 from pathlib import Path
 import time
+import random
 
 from PySide6.QtMultimedia import (QAudioInput, QCamera, QCameraDevice,
                                   QImageCapture, QMediaCaptureSession,
@@ -30,6 +31,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import pandas as pd
+import Questions
 
 
 from calibration import start_calibration
@@ -54,13 +56,21 @@ class Camera(QMainWindow):
         self._ui = Ui_Camera()
         self.timerCount = False
         self.timerQuest = None
-        self.waitMax = 10
+        self.waitMax = 1
         self.number = self.waitMax
         self.showQuestion = False
         self._ui.setupUi(self)
         image = os.path.join(Path(__file__).parent, "shutter.svg")
         self._ui.takeImageButton.setIcon(QIcon(os.fspath(image)))
         self._ui.actionAbout_Qt.triggered.connect(qApp.aboutQt)
+        
+        self.filePath = os.path.join(Path(__file__).parent, "Questions.json")
+        self.questions = Questions.Questions(self.filePath)
+        self.question = None
+        self.text =""
+        self.answer_1 = ""
+        self.answer_2 = ""
+        self.answer_3 = ""
 
         # create variables to store calibration variables
         self.ret = None
@@ -186,19 +196,38 @@ class Camera(QMainWindow):
     def imageCapturedText(self, requestId, image):
         # Slot to handle captured images
         # Add text to the image
+        self.question = self.questions.get_question()
         if (self.loop):
             scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio,
                                     Qt.SmoothTransformation)
-            text = "Hello word"
             if self.timerCount :
                 if time.time() - self.timerQuest > 1:
                     self.number -=1
                     self.timerQuest = time.time()
-                text = str(self.number)
-            if self.number ==-1:
-                text = "Question"
-                self.number = self.waitMax
-            image_with_text = self.addTextToImage(scaled_image, text)
+                self.text = str(self.number)
+            if self.number < 0 and not self.showQuestion:
+                self.timerCount = False
+                self.showQuestion = True
+                self.text = self.question['question']
+                self.answer_1 = self.question['answers'][0]
+                self.answer_2 = self.question['answers'][1]
+                self.answer_3 = self.question['answers'][2]
+                self.timerQuest = time.time()
+            if self.showQuestion:
+                if time.time() - self.timerQuest > 3:
+                    self.text = self.question['question']
+                    random.shuffle(self.question["answers"])
+                    self.answer_1 = self.question['answers'][0]
+                    self.answer_2 = self.question['answers'][1]
+                    self.answer_3 = self.question['answers'][2]
+                    self.timerQuest = time.time()
+                    self.number = -1
+
+            image_with_text = self.addTextToImage(scaled_image, self.text, (Qt.AlignTop| Qt.AlignHCenter))
+            if self.showQuestion:
+                image_with_text = self.addTextToImage(image_with_text, self.answer_1,  Qt.AlignVCenter | Qt.AlignLeft)
+                image_with_text = self.addTextToImage(image_with_text, self.answer_2, Qt.AlignVCenter | Qt.AlignRight)
+                image_with_text = self.addTextToImage(image_with_text, self.answer_3, Qt.AlignVCenter | Qt.AlignHCenter)
 
             # Display the modified image
             self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image_with_text))
@@ -207,7 +236,7 @@ class Camera(QMainWindow):
             self.displayCapturedImage()
         
     @Slot()
-    def addTextToImage(self, image, text):
+    def addTextToImage(self, image, text, position):
         # Create a QPixmap from the QImage
         pixmap = QPixmap.fromImage(image)
 
@@ -222,7 +251,7 @@ class Camera(QMainWindow):
         painter.setPen(color)
 
         # Draw the overlay text at the bottom of the image
-        painter.drawText(pixmap.rect(), Qt.AlignTop| Qt.AlignHCenter, text)
+        painter.drawText(pixmap.rect(),position, text)
 
         # End painting
         painter.end()
