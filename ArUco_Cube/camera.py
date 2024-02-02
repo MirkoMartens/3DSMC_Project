@@ -68,6 +68,14 @@ class Camera(QMainWindow):
         self.isDisplayTracking = True
         self.isDisplayStats = False
 
+        # create variables for ArUco
+        self.arucoDict = cv2.aruco.DICT_4X4_50
+        self.aruco_dict =  cv2.aruco.getPredefinedDictionary(self.arucoDict)
+        self.corners = None
+        self.ids = None
+        self.rejected = None
+        self.result = None
+
         # disable all buttons by default
         self.updateCameraActive(False)
         self.readyForCapture(False)
@@ -118,9 +126,11 @@ class Camera(QMainWindow):
             self.m_imageCapture.readyForCaptureChanged.connect(self.readyForCapture)
             self.m_captureSession.setImageCapture(self.m_imageCapture)
             self.m_imageCapture.imageCaptured.connect(self.processCapturedImage)
+            self.m_imageCapture.imageCaptured.connect(self.drawArucoMarkers)
             self.m_imageCapture.imageCaptured.connect(self.imageCapturedText)
             self.m_imageCapture.imageSaved.connect(self.imageSaved)
             self.m_imageCapture.errorOccurred.connect(self.displayCaptureError)
+
 
         self.m_captureSession.setVideoOutput(self._ui.viewfinder)
 
@@ -175,6 +185,20 @@ class Camera(QMainWindow):
             
         self.m_imageCapture.capture() 
             
+    @Slot()
+    def drawArucoMarkers(self, requestId, image):
+        if self.isDisplayTracking:
+            #self.aruco_param = cv2.aruco.DetectorParameters()
+            #self.detector = cv2.aruco.ArucoDetector(self.aruco_dict, self.aruco_param)
+
+            self.corners, self.ids, self.rejected = self.aruco.detectMarkers(image, self.aruco_dict)
+            # show image with detected markers
+            self.result = image.copy()
+            cv2.aruco.drawDetectedMarkers(self.result, self.corners, self.ids)
+            # Display the modified image
+            self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(result))
+
+
     @Slot()
     def imageCapturedText(self, requestId, image):
         # Slot to handle captured images
