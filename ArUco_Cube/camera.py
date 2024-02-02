@@ -52,6 +52,11 @@ class Camera(QMainWindow):
         self.m_metaDataDialog = None
 
         self._ui = Ui_Camera()
+        self.timerCount = False
+        self.timerQuest = None
+        self.waitMax = 10
+        self.number = self.waitMax
+        self.showQuestion = False
         self._ui.setupUi(self)
         image = os.path.join(Path(__file__).parent, "shutter.svg")
         self._ui.takeImageButton.setIcon(QIcon(os.fspath(image)))
@@ -171,6 +176,8 @@ class Camera(QMainWindow):
             self.loop= True
             self.timerLoop =  QTimer(self.m_camera)
             self.timerLoop.timeout.connect(self.captureFrameLoop)
+            self.timerQuest = time.time()
+            self.timerCount = True
             self.timerLoop.start(20) 
             
         self.m_imageCapture.capture() 
@@ -182,7 +189,16 @@ class Camera(QMainWindow):
         if (self.loop):
             scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio,
                                     Qt.SmoothTransformation)
-            image_with_text = self.addTextToImage(scaled_image, "Hello, World!")
+            text = "Hello word"
+            if self.timerCount :
+                if time.time() - self.timerQuest > 1:
+                    self.number -=1
+                    self.timerQuest = time.time()
+                text = str(self.number)
+            if self.number ==-1:
+                text = "Question"
+                self.number = self.waitMax
+            image_with_text = self.addTextToImage(scaled_image, text)
 
             # Display the modified image
             self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image_with_text))
@@ -433,6 +449,7 @@ class Camera(QMainWindow):
     @Slot()
     def startGameOne(self):
         self.readyForCapture(False)
+        self.captureFrameLoop()
 
     @Slot()
     def startGameTwo(self):
