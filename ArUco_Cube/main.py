@@ -5,7 +5,7 @@
 
 import sys
 
-from PySide6.QtWidgets import QApplication
+from PySide6 import QtWidgets
 
 from camera import Camera
 from pathlib import Path
@@ -13,7 +13,10 @@ import cv2
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    if not QtWidgets.QApplication.instance():
+        app = QtWidgets.QApplication(sys.argv)
+    else:
+        app = QtWidgets.QApplication.instance()
     camera = Camera()
     camera.show()
     sys.exit(app.exec())
