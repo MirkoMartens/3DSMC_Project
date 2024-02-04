@@ -89,8 +89,11 @@ class Camera(QMainWindow):
         self.rotation_vectors = None
         self.translation_vectors = None
 
+        # create variables for games
+        self.isStartGameOne = False
+
         # create variables for CheckBox
-        self.isDisplayTracking = True
+        self.isDisplayTracking = False
         self.isDisplayStats = False
 
         # create variables for ArUco
@@ -216,15 +219,33 @@ class Camera(QMainWindow):
     @Slot()
     def drawArucoMarkers(self, requestId, image):
         if self.isDisplayTracking:
-            #self.aruco_param = cv2.aruco.DetectorParameters()
-            #self.detector = cv2.aruco.ArucoDetector(self.aruco_dict, self.aruco_param)
+            image = scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
-            self.corners, self.ids, self.rejected = cv2.aruco.detectMarkers(image, self.aruco_dict)
-            # show image with detected markers
-            self.result = image.copy()
+            # Convert QImage to NumPy array
+            image_array = np.array(scaled_image.constBits()).reshape(scaled_image.height(), scaled_image.width(), 4).copy()  # Assuming the image is RGBA
+
+            # Convert RGBA to BGR (OpenCV uses BGR)
+            opencv_image = cv2.cvtColor(image_array, cv2.COLOR_RGBA2RGB)
+
+            # Detect Aruco markers
+            self.corners, self.ids, self.rejected = cv2.aruco.detectMarkers(opencv_image, self.aruco_dict)
+
+            # Ensure self.result is initialized as a NumPy array
+            self.result = opencv_image.copy()
+
+            # Show image with detected markers
             cv2.aruco.drawDetectedMarkers(self.result, self.corners, self.ids)
-            # Display the modified image
-            self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(result))
+
+            # Convert the modified image to QImage for display
+            height, width, channel = self.result.shape
+            bytes_per_line = 3 * width
+            image = QImage(self.result.data, width, height, bytes_per_line, QImage.Format_RGB888)
+
+            # Display the image
+            self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image))
+            self.displayCapturedImage()
+        else:
+            self.displayViewfinder()
 
 
     @Slot()
@@ -232,7 +253,7 @@ class Camera(QMainWindow):
         # Slot to handle captured images
         # Add text to the image
         self.question = self.questions.get_question()
-        if (self.loop):
+        if (self.loop and self.isStartGameOne):
             scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio,
                                     Qt.SmoothTransformation)
             if self.timerCount and not self.endQuestion :
@@ -570,7 +591,7 @@ class Camera(QMainWindow):
 
     @Slot()
     def startGameOne(self):
-        self.readyForCapture(False)
+        self.isStartGameOne = True
         self.captureFrameLoop()
 
     @Slot()
@@ -580,6 +601,7 @@ class Camera(QMainWindow):
     @Slot()
     def quitGame(self):
         self.loop = False
+        self._ui.trackingCheckBox.setCheckState(Qt.Unchecked)
         self.timerLoop.stop()
         self.showQuestion = False
         self.number = self.waitMax
@@ -588,12 +610,15 @@ class Camera(QMainWindow):
 
     @Slot()
     def displayTracking(self):
-        if self.isDisplayTracking:
-            self.isDisplayTracking = False
+        if not self.isDisplayTracking:
+            self.isDisplayTracking = True
             print("Displaying tracking")
         else:
-            self.isDisplayTracking = True
+            self.isDisplayTracking = False
+            self.timerLoop.stop()
+            self.displayViewfinder()
             print("Not displaying tracking")
+        self.captureFrameLoop()
 
     @Slot()
     def displayStats(self):
