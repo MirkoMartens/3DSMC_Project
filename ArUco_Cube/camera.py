@@ -220,7 +220,7 @@ class Camera(QMainWindow):
     @Slot()
     def drawArucoMarkers(self, requestId, image):
         if self.isTracking:
-            image = scaled_image =  image.scaledToWidth(self._ui.viewfinder.size().width()*0.9999,  Qt.SmoothTransformation)
+            image = scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width()*0.998,  Qt.SmoothTransformation)
             # Convert QImage to NumPy array
             image_array = np.array(scaled_image.constBits()).reshape(scaled_image.height(), scaled_image.width(), 4).copy()  # Assuming the image is RGBA
             # Convert RGBA to BGR (OpenCV uses BGR)
@@ -257,8 +257,7 @@ class Camera(QMainWindow):
         if (self.loop and self.isStartGameOne):
             self.isTracking = False
             #scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width()* 0.9999,  Qt.SmoothTransformation)
-            #scaled_image = image.scaledToHeight(self._ui.viewfinder.size().height(),  Qt.SmoothTransformation)
+            scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width() * 0.998,  Qt.SmoothTransformation)
             if self.timerCount and not self.endQuestion :
                 if time.time() - self.timerQuest > 1:
                     self.number -=1
