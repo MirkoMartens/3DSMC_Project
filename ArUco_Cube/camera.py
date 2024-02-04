@@ -93,6 +93,7 @@ class Camera(QMainWindow):
         self.isStartGameOne = False
 
         # create variables for CheckBox
+        self.isTracking = False
         self.isDisplayTracking = False
         self.isDisplayStats = False
 
@@ -218,34 +219,34 @@ class Camera(QMainWindow):
             
     @Slot()
     def drawArucoMarkers(self, requestId, image):
-        if self.isDisplayTracking:
+        if self.isTracking:
             image = scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-
             # Convert QImage to NumPy array
             image_array = np.array(scaled_image.constBits()).reshape(scaled_image.height(), scaled_image.width(), 4).copy()  # Assuming the image is RGBA
-
             # Convert RGBA to BGR (OpenCV uses BGR)
             opencv_image = cv2.cvtColor(image_array, cv2.COLOR_RGBA2RGB)
 
             # Detect Aruco markers
             self.corners, self.ids, self.rejected = cv2.aruco.detectMarkers(opencv_image, self.aruco_dict)
 
-            # Ensure self.result is initialized as a NumPy array
-            self.result = opencv_image.copy()
+            # Draw detected markers
+            if self.isDisplayTracking:
+                # Ensure self.result is initialized as a NumPy array
+                self.result = opencv_image.copy()
 
-            # Show image with detected markers
-            cv2.aruco.drawDetectedMarkers(self.result, self.corners, self.ids)
+                # Show image with detected markers
+                cv2.aruco.drawDetectedMarkers(self.result, self.corners, self.ids)
 
-            # Convert the modified image to QImage for display
-            height, width, channel = self.result.shape
-            bytes_per_line = 3 * width
-            image = QImage(self.result.data, width, height, bytes_per_line, QImage.Format_RGB888)
+                # Convert the modified image to QImage for display
+                height, width, channel = self.result.shape
+                bytes_per_line = 3 * width
+                image = QImage(self.result.data, width, height, bytes_per_line, QImage.Format_RGB888)
 
-            # Display the image
-            self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image))
-            self.displayCapturedImage()
-        else:
-            self.displayViewfinder()
+                # Display the image
+                self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image))
+                self.displayCapturedImage()
+            else:
+                self.displayViewfinder()
 
 
     @Slot()
@@ -254,6 +255,7 @@ class Camera(QMainWindow):
         # Add text to the image
         self.question = self.questions.get_question()
         if (self.loop and self.isStartGameOne):
+            self.isTracking = False
             scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio,
                                     Qt.SmoothTransformation)
             if self.timerCount and not self.endQuestion :
@@ -314,6 +316,9 @@ class Camera(QMainWindow):
                 self.showQuestion = False
                 self.endQuestion = True
                 self.timerCount = False
+                self.isStartGameOne = False
+                self._ui.trackingCheckBox.setEnabled(True)
+                self._ui.statsCheckBox.setEnabled(True)
                 self.text = "End of Question"
             
 
@@ -592,39 +597,52 @@ class Camera(QMainWindow):
     @Slot()
     def startGameOne(self):
         self.isStartGameOne = True
+        self._ui.trackingCheckBox.setEnabled(False)
+        self._ui.statsCheckBox.setEnabled(False)
+        #self.isTracking = True
         self.captureFrameLoop()
 
     @Slot()
     def startGameTwo(self):
+        self._ui.trackingCheckBox.setEnabled(False)
+        self._ui.statsCheckBox.setEnabled(False)
         self.readyForCapture(False)
         
     @Slot()
     def quitGame(self):
         self.loop = False
-        self._ui.trackingCheckBox.setCheckState(Qt.Unchecked)
+        self.isStartGameOne = False
         self.timerLoop.stop()
         self.showQuestion = False
         self.number = self.waitMax
         self.timerCount = False
         self.displayViewfinder()
+        self.updateCameraActive(self.m_camera.isActive())
+        self._ui.trackingCheckBox.setCheckState(Qt.Unchecked)
+        self.isDisplayTracking = False
+        self._ui.trackingCheckBox.setEnabled(True)
+        self._ui.statsCheckBox.setEnabled(True)
+        self.displayViewfinder()
 
     @Slot()
     def displayTracking(self):
         if not self.isDisplayTracking:
+            self.isTracking = True
             self.isDisplayTracking = True
+            self.captureFrameLoop()
             print("Displaying tracking")
         else:
             self.isDisplayTracking = False
+            self.loop = False
             self.timerLoop.stop()
             self.displayViewfinder()
             print("Not displaying tracking")
-        self.captureFrameLoop()
 
     @Slot()
     def displayStats(self):
-        if self.isDisplayStats:
-            self.isDisplayStats = False
+        if not self.isDisplayStats:
+            self.isDisplayStats = True
             print("Not displaying stats")
         else:
-            self.isDisplayStats = True
+            self.isDisplayStats = False
             print("Displaying stats")
