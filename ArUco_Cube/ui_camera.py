@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'camera.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.1
+## Created by: Qt User Interface Compiler version 6.6.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -47,25 +47,50 @@ class Ui_Camera(object):
         self.captureWidgetPage1.setObjectName(u"captureWidgetPage1")
         self.gridLayout = QGridLayout(self.captureWidgetPage1)
         self.gridLayout.setObjectName(u"gridLayout")
+        self.calibrationButton = QPushButton(self.captureWidgetPage1)
+        self.calibrationButton.setObjectName(u"calibrationButton")
+
+        self.gridLayout.addWidget(self.calibrationButton, 4, 0, 1, 1)
+
+        self.trackingCheckBox = QCheckBox(self.captureWidgetPage1)
+        self.trackingCheckBox.setObjectName(u"trackingCheckBox")
+
+        self.gridLayout.addWidget(self.trackingCheckBox, 6, 0, 1, 1)
+
+        self.label = QLabel(self.captureWidgetPage1)
+        self.label.setObjectName(u"label")
+
+        self.gridLayout.addWidget(self.label, 9, 0, 1, 1)
+
+        self.captureCalibrationButton = QPushButton(self.captureWidgetPage1)
+        self.captureCalibrationButton.setObjectName(u"captureCalibrationButton")
+
+        self.gridLayout.addWidget(self.captureCalibrationButton, 3, 0, 1, 1)
+
         self.takeImageButton = QPushButton(self.captureWidgetPage1)
         self.takeImageButton.setObjectName(u"takeImageButton")
         self.takeImageButton.setEnabled(False)
 
         self.gridLayout.addWidget(self.takeImageButton, 0, 0, 1, 1)
 
+        self.gameButton_2 = QPushButton(self.captureWidgetPage1)
+        self.gameButton_2.setObjectName(u"gameButton_2")
+
+        self.gridLayout.addWidget(self.gameButton_2, 2, 0, 1, 1)
+
         self.statsCheckBox = QCheckBox(self.captureWidgetPage1)
         self.statsCheckBox.setObjectName(u"statsCheckBox")
 
-        self.gridLayout.addWidget(self.statsCheckBox, 6, 0, 1, 1)
-
-        self.label = QLabel(self.captureWidgetPage1)
-        self.label.setObjectName(u"label")
-
-        self.gridLayout.addWidget(self.label, 8, 0, 1, 1)
+        self.gridLayout.addWidget(self.statsCheckBox, 7, 0, 1, 1)
 
         self.verticalSpacer_2 = QSpacerItem(20, 161, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.gridLayout.addItem(self.verticalSpacer_2, 7, 0, 1, 1)
+        self.gridLayout.addItem(self.verticalSpacer_2, 8, 0, 1, 1)
+
+        self.gameButton_1 = QPushButton(self.captureWidgetPage1)
+        self.gameButton_1.setObjectName(u"gameButton_1")
+
+        self.gridLayout.addWidget(self.gameButton_1, 1, 0, 1, 1)
 
         self.exposureCompensation = QSlider(self.captureWidgetPage1)
         self.exposureCompensation.setObjectName(u"exposureCompensation")
@@ -75,32 +100,12 @@ class Ui_Camera(object):
         self.exposureCompensation.setOrientation(Qt.Horizontal)
         self.exposureCompensation.setTickPosition(QSlider.TicksAbove)
 
-        self.gridLayout.addWidget(self.exposureCompensation, 9, 0, 1, 1)
+        self.gridLayout.addWidget(self.exposureCompensation, 10, 0, 1, 1)
 
-        self.gameButton_2 = QPushButton(self.captureWidgetPage1)
-        self.gameButton_2.setObjectName(u"gameButton_2")
+        self.quitButton = QPushButton(self.captureWidgetPage1)
+        self.quitButton.setObjectName(u"quitButton")
 
-        self.gridLayout.addWidget(self.gameButton_2, 2, 0, 1, 1)
-
-        self.gameButton_1 = QPushButton(self.captureWidgetPage1)
-        self.gameButton_1.setObjectName(u"gameButton_1")
-
-        self.gridLayout.addWidget(self.gameButton_1, 1, 0, 1, 1)
-
-        self.captureCalibrationButton = QPushButton(self.captureWidgetPage1)
-        self.captureCalibrationButton.setObjectName(u"captureCalibrationButton")
-
-        self.gridLayout.addWidget(self.captureCalibrationButton, 3, 0, 1, 1)
-
-        self.trackingCheckBox = QCheckBox(self.captureWidgetPage1)
-        self.trackingCheckBox.setObjectName(u"trackingCheckBox")
-
-        self.gridLayout.addWidget(self.trackingCheckBox, 5, 0, 1, 1)
-
-        self.calibrationButton = QPushButton(self.captureWidgetPage1)
-        self.calibrationButton.setObjectName(u"calibrationButton")
-
-        self.gridLayout.addWidget(self.calibrationButton, 4, 0, 1, 1)
+        self.gridLayout.addWidget(self.quitButton, 5, 0, 1, 1)
 
         self.captureWidget.addWidget(self.captureWidgetPage1)
         self.captureWidgetPage2 = QWidget()
@@ -166,7 +171,7 @@ class Ui_Camera(object):
         Camera.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(Camera)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1132, 21))
+        self.menubar.setGeometry(QRect(0, 0, 1132, 30))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuDevices = QMenu(self.menubar)
@@ -203,6 +208,8 @@ class Ui_Camera(object):
         self.captureCalibrationButton.clicked.connect(Camera.takeCalibrationImages)
         self.calibrationButton.clicked.connect(Camera.calibrate)
 
+        self.quitButton.clicked.connect(Camera.quitGame)
+
         self.stackedWidget.setCurrentIndex(0)
 
 
@@ -219,14 +226,15 @@ class Ui_Camera(object):
         self.actionStopCamera.setText(QCoreApplication.translate("Camera", u"Stop Camera", None))
         self.actionSettings.setText(QCoreApplication.translate("Camera", u"Change Settings", None))
         self.actionAbout_Qt.setText(QCoreApplication.translate("Camera", u"About Qt", None))
-        self.takeImageButton.setText(QCoreApplication.translate("Camera", u"Capture Photo", None))
-        self.statsCheckBox.setText(QCoreApplication.translate("Camera", u"Display Stats", None))
-        self.label.setText(QCoreApplication.translate("Camera", u"Exposure Compensation:", None))
-        self.gameButton_2.setText(QCoreApplication.translate("Camera", u"Start Game 2", None))
-        self.gameButton_1.setText(QCoreApplication.translate("Camera", u"Start Game 1", None))
-        self.captureCalibrationButton.setText(QCoreApplication.translate("Camera", u"Capture Calibration", None))
-        self.trackingCheckBox.setText(QCoreApplication.translate("Camera", u"Display Tracking", None))
         self.calibrationButton.setText(QCoreApplication.translate("Camera", u"Calibrate Camera", None))
+        self.trackingCheckBox.setText(QCoreApplication.translate("Camera", u"Display Tracking", None))
+        self.label.setText(QCoreApplication.translate("Camera", u"Exposure Compensation:", None))
+        self.captureCalibrationButton.setText(QCoreApplication.translate("Camera", u"Capture Calibration", None))
+        self.takeImageButton.setText(QCoreApplication.translate("Camera", u"Capture Photo", None))
+        self.gameButton_2.setText(QCoreApplication.translate("Camera", u"Start Game 2", None))
+        self.statsCheckBox.setText(QCoreApplication.translate("Camera", u"Display Stats", None))
+        self.gameButton_1.setText(QCoreApplication.translate("Camera", u"Start Game 1", None))
+        self.quitButton.setText(QCoreApplication.translate("Camera", u"Quit", None))
         self.lastImagePreviewLabel.setText("")
         self.menuFile.setTitle(QCoreApplication.translate("Camera", u"File", None))
         self.menuDevices.setTitle(QCoreApplication.translate("Camera", u"Devices", None))
