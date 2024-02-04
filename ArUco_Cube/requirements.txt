@@ -1,2 +1,40 @@
-PySide6==6.6.1
-opencv-python==4.9.0.80
+# This file may be used to create an environment using:
+# $ conda create --name <env> --file <this file>
+# platform: win-64
+bzip2=1.0.8=hcfcfb64_5
+ca-certificates=2024.2.2=h56e8100_0
+contourpy=1.2.0=pypi_0
+cycler=0.12.1=pypi_0
+fonttools=4.47.2=pypi_0
+kiwisolver=1.4.5=pypi_0
+libexpat=2.5.0=h63175ca_1
+libffi=3.4.2=h8ffe710_5
+libsqlite=3.44.2=hcfcfb64_0
+libzlib=1.2.13=hcfcfb64_5
+matplotlib=3.8.2=pypi_0
+numpy=1.26.3=pypi_0
+opencv-contrib-python=3.4.18.65=pypi_0
+opencv-python=3.4.18.65=pypi_0
+openssl=3.2.1=hcfcfb64_0
+packaging=23.2=pypi_0
+pandas=2.2.0=pypi_0
+pillow=10.2.0=pypi_0
+pip=23.3.2=pyhd8ed1ab_0
+pyparsing=3.1.1=pypi_0
+pyside6=6.6.1=pypi_0
+pyside6-addons=6.6.1=pypi_0
+pyside6-essentials=6.6.1=pypi_0
+python=3.12.1=h2628c8c_1_cpython
+python-dateutil=2.8.2=pypi_0
+pytz=2024.1=pypi_0
+setuptools=69.0.3=pyhd8ed1ab_0
+shiboken6=6.6.1=pypi_0
+six=1.16.0=pypi_0
+tk=8.6.13=h5226925_1
+tzdata=2023.4=pypi_0
+ucrt=10.0.22621.0=h57928b3_0
+vc=14.3=hcf57466_18
+vc14_runtime=14.38.33130=h82b7239_18
+vs2015_runtime=14.38.33130=hcb4865c_18
+wheel=0.42.0=pyhd8ed1ab_0
+xz=5.2.6=h8d14728_0

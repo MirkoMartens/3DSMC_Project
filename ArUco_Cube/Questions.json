@@ -33,11 +33,11 @@
   },
   {
     "question": "What SLAM stands for?",
-    "answers": ["Simultaneous Localization and Mapping", "When one team in the Six Nations Championship beats all the others during one year's competition.", "A sweet jam"]
+    "answers": ["Simultaneous Localization and Mapping", "When one team win the Six Nations Championship", "A sweet jam"]
   },
   {
     "question": "What you DON'T need to align two objects using known correspondences?",
-    "answers": ["A ruler", "Compute center of gravity of both objects", "Scale one object to match the avg. distance from all vertices to the center of gravity"]
+    "answers": ["A ruler", "Compute center of gravity of both objects", "Scale one object"]
   },
   {
     "question": "In which year was the 'famous' game 'The Legend of Zelda: Ocarina of Time' released?",
