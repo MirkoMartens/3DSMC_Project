@@ -11,8 +11,8 @@ from PySide6.QtMultimedia import (QAudioInput, QCamera, QCameraDevice,
                                   QMediaDevices, QMediaMetaData,
                                   QMediaRecorder, QVideoFrame, QVideoSink, QMediaPlayer)
 from PySide6.QtWidgets import QDialog, QMainWindow, QMessageBox, QApplication as qApp
-from PySide6.QtGui import QAction, QActionGroup, QIcon, QImage, QPixmap, QPainter, QFont, QColor
-from PySide6.QtCore import QDateTime, QDir, QTimer, Qt, Slot, qWarning,QRect
+from PySide6.QtGui import QAction, QActionGroup, QIcon, QImage, QPixmap, QPainter, QFont, QColor, QPen, QFontMetrics,QCursor
+from PySide6.QtCore import QDateTime, QDir, QTimer, Qt, Slot, qWarning,QRect,QSize
 from metadatadialog import MetaDataDialog
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from imagesettings import ImageSettings
@@ -54,7 +54,19 @@ class Camera(QMainWindow):
         self.timerQuest = None
         self.waitMax = 1
         self.number = self.waitMax
+        self.delayQuestion = 10
         self.showQuestion = False
+        self.endQuestion = False
+        self.showResult = False
+        self.color = "white"
+        self.showAnswer = False
+        self.position = -1
+        self.delayAnswer = 5
+        self.id = 0
+        self.answerFound = ""
+        self.timerAnswer = None
+        self.countQuestion = 0
+        self.maxQuestion = 10
         self._ui.setupUi(self)
         image = os.path.join(Path(__file__).parent, "shutter.svg")
         self._ui.takeImageButton.setIcon(QIcon(os.fspath(image)))
@@ -68,6 +80,7 @@ class Camera(QMainWindow):
         self.answer_1 = ""
         self.answer_2 = ""
         self.answer_3 = ""
+        self.right_answer = ""
 
         # create variables to store calibration variables
         self.ret = None
@@ -186,8 +199,7 @@ class Camera(QMainWindow):
             self.timerLoop.timeout.connect(self.captureFrameLoop)
             self.timerQuest = time.time()
             self.timerCount = True
-            self.timerLoop.start(20) 
-            
+            self.timerLoop.start(20)     
         self.m_imageCapture.capture()
             
     @Slot()
@@ -198,34 +210,66 @@ class Camera(QMainWindow):
         if (self.loop):
             scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio,
                                     Qt.SmoothTransformation)
-            if self.timerCount :
+            if self.timerCount and not self.endQuestion :
                 if time.time() - self.timerQuest > 1:
                     self.number -=1
                     self.timerQuest = time.time()
                 self.text = str(self.number)
-            if self.number < 0 and not self.showQuestion:
+            if self.number < 0 and not self.showQuestion and not self.endQuestion:
                 self.timerCount = False
                 self.showQuestion = True
                 self.text = self.question['question']
                 self.answer_1 = self.question['answers'][0]
                 self.answer_2 = self.question['answers'][1]
                 self.answer_3 = self.question['answers'][2]
+                self.right_answer = self.answer_1
                 self.timerQuest = time.time()
+                self.timerAnswer = time.time()
+                self.showAnswer = False
             if self.showQuestion:
-                if time.time() - self.timerQuest > 3:
+                if time.time() - self.timerQuest > self.delayQuestion:
                     self.text = self.question['question']
+                    self.right_answer = self.question['answers'][0]
                     random.shuffle(self.question["answers"])
                     self.answer_1 = self.question['answers'][0]
                     self.answer_2 = self.question['answers'][1]
                     self.answer_3 = self.question['answers'][2]
                     self.timerQuest = time.time()
+                    self.timerAnswer = time.time()
+                    self.showAnswer = False
                     self.number = -1
+                    self.countQuestion += 1
+                    self.position = -1
+                    self.answerId = -1
+                    self.answerFound = ""
+                if time.time() - self.timerAnswer > self.delayAnswer:
+                    # Get the current position of the mouse
+                    if (self.position == -1):
+                        self.position = QCursor.pos().x()
+                        if (self.position < self._ui.viewfinder.size().width()/3):
+                            self.answerFound = self.answer_1
+                        elif (self.position < 2*self._ui.viewfinder.size().width()/3):
+                            self.answerFound = self.answer_2
+                        else:   
+                            self.answerFound = self.answer_3
+                    self.showAnswer = True
 
             image_with_text = self.addTextToImage(scaled_image, self.text, (Qt.AlignTop| Qt.AlignHCenter))
             if self.showQuestion:
-                image_with_text = self.addTextToImage(image_with_text, self.answer_1,  Qt.AlignVCenter | Qt.AlignLeft)
-                image_with_text = self.addTextToImage(image_with_text, self.answer_2, Qt.AlignVCenter | Qt.AlignRight)
-                image_with_text = self.addTextToImage(image_with_text, self.answer_3, Qt.AlignVCenter | Qt.AlignHCenter)
+                self.id = 1
+                image_with_text = self.addTextToImage(image_with_text, self.answer_1,  Qt.AlignVCenter | Qt.AlignLeft, self.color)
+                self.id = 2
+                image_with_text = self.addTextToImage(image_with_text, self.answer_2, Qt.AlignVCenter | Qt.AlignHCenter,self.color)
+                self.id = 3
+                image_with_text = self.addTextToImage(image_with_text, self.answer_3, Qt.AlignVCenter | Qt.AlignRight,self.color)
+                self.id = 0
+            if self.countQuestion > self.maxQuestion +1:
+                self.countQuestion = 0
+                self.showQuestion = False
+                self.endQuestion = True
+                self.timerCount = False
+                self.text = "End of Question"
+            
 
             # Display the modified image
             self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image_with_text))
@@ -234,7 +278,7 @@ class Camera(QMainWindow):
             self.displayCapturedImage()
         
     @Slot()
-    def addTextToImage(self, image, text, position):
+    def addTextToImage(self, image, text, position, color = "white"):
         # Create a QPixmap from the QImage
         pixmap = QPixmap.fromImage(image)
 
@@ -244,12 +288,39 @@ class Camera(QMainWindow):
 
         # Set font and color for the overlay text
         font = QFont("Arial", 16)
-        color = QColor("white")
+        color = QColor("black")
         painter.setFont(font)
-        painter.setPen(color)
+        width,height = pixmap.width(), pixmap.height()
+        if self.id > 0:
+            rectangle = painter.drawText(pixmap.rect(),position, text)
+            painter.setPen("black")
+            if self.showAnswer:
+                if self.id == 1 and self.right_answer == self.answer_1:
+                    color = QColor("green")
+                elif self.id == 2 and self.right_answer == self.answer_2:
+                    color = QColor("green")
+                elif self.id == 3 and self.right_answer == self.answer_3:
+                   color = QColor("green")
+                else:
+                    color = QColor("red")
+                if (self.right_answer == self.answerFound):
+                    painter.drawText(width/2,height/3, "Correct")
+                else:
+                    painter.drawText(width/2,height/3, "Wrong")
+            else:
+                color = QColor("black")
+
+            painter.setPen(color)
+            
+            painter.drawRect(rectangle)
 
         # Draw the overlay text at the bottom of the image
-        painter.drawText(pixmap.rect(),position, text)
+        else:
+            painter.setPen(color)
+            painter.drawText(pixmap.rect(),position, text)
+            painter.drawLine(0,height *0.1,width,height *0.1)
+            painter.drawLine(width/3,height *0.1,width/3,height)
+            painter.drawLine(2*width/3,height *0.1,2*width/3,height)
 
         # End painting
         painter.end()
