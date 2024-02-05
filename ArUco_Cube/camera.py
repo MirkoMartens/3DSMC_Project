@@ -93,16 +93,17 @@ class Camera(QMainWindow):
         self.isStartGameOne = False
 
         # create variables for CheckBox
-        self.isTracking = False
         self.isDisplayTracking = False
         self.isDisplayStats = False
 
         # create variables for ArUco
         self.arucoDict = cv2.aruco.DICT_4X4_50
         self.aruco_dict =  cv2.aruco.getPredefinedDictionary(self.arucoDict)
+
         self.corners = None
         self.ids = None
         self.rejected = None
+
         self.result = None
 
         # disable all buttons by default
@@ -156,8 +157,7 @@ class Camera(QMainWindow):
             self.m_imageCapture.readyForCaptureChanged.connect(self.readyForCapture)
             self.m_captureSession.setImageCapture(self.m_imageCapture)
             self.m_imageCapture.imageCaptured.connect(self.processCapturedImage)
-            self.m_imageCapture.imageCaptured.connect(self.drawArucoMarkers)
-            self.m_imageCapture.imageCaptured.connect(self.imageCapturedText)
+            self.m_imageCapture.imageCaptured.connect(self.processFrame)
             self.m_imageCapture.imageSaved.connect(self.imageSaved)
             self.m_imageCapture.errorOccurred.connect(self.displayCaptureError)
 
@@ -216,117 +216,129 @@ class Camera(QMainWindow):
             self.timerLoop.start(20) 
             
         self.m_imageCapture.capture() 
-            
+
     @Slot()
-    def drawArucoMarkers(self, requestId, image):
-        if self.isTracking:
-            image = scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width()*0.998,  Qt.SmoothTransformation)
-            # Convert QImage to NumPy array
-            image_array = np.array(scaled_image.constBits()).reshape(scaled_image.height(), scaled_image.width(), 4).copy()  # Assuming the image is RGBA
-            # Convert RGBA to BGR (OpenCV uses BGR)
-            opencv_image = cv2.cvtColor(image_array, cv2.COLOR_RGBA2RGB)
+    def processFrame(self, requestId, image):
+        image = scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width()*0.998,  Qt.SmoothTransformation)
+        # Convert QImage to NumPy array
+        image_array = np.array(scaled_image.constBits()).reshape(scaled_image.height(), scaled_image.width(), 4).copy()  # Assuming the image is RGBA
+        # Convert RGBA to BGR (OpenCV uses BGR)
+        opencv_image = cv2.cvtColor(image_array, cv2.COLOR_RGBA2RGB)
 
-            # Detect Aruco markers
-            self.corners, self.ids, self.rejected = cv2.aruco.detectMarkers(opencv_image, self.aruco_dict)
+        # Detect Aruco markers
+        tmp_corners, tmp_ids, tmp_rejected = cv2.aruco.detectMarkers(opencv_image, self.aruco_dict)
 
-            # Draw detected markers
-            if self.isDisplayTracking:
-                # Ensure self.result is initialized as a NumPy array
-                self.result = opencv_image.copy()
+        # Only update values if marker was detected
+        if tmp_ids is not None:
+            self.corners, self.ids, self.rejected = tmp_corners, tmp_ids, tmp_rejected
 
-                # Show image with detected markers
-                cv2.aruco.drawDetectedMarkers(self.result, self.corners, self.ids)
+        if self.isDisplayTracking:
+            image = self.drawArucoMarkers(opencv_image)
 
-                # Convert the modified image to QImage for display
-                height, width, channel = self.result.shape
-                bytes_per_line = 3 * width
-                image = QImage(self.result.data, width, height, bytes_per_line, QImage.Format_RGB888)
+        if self.isStartGameOne:
+            image = self.imageCapturedText(image)
 
-                # Display the image
-                self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image))
-                self.displayCapturedImage()
-            else:
-                self.displayViewfinder()
+        if self.isStartGameOne or self.isDisplayTracking:
+            # Display captured image for 4 seconds.
+            self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image))
+            self.displayCapturedImage()
+        else:
+            self.displayViewfinder()
 
 
     @Slot()
-    def imageCapturedText(self, request_id, image):
+    def drawArucoMarkers(self, image):
+
+        # Ensure self.result is initialized as a NumPy array
+        self.result = image.copy()
+
+        # Show image with detected markers
+        cv2.aruco.drawDetectedMarkers(self.result, self.corners, self.ids)
+
+        # Convert the modified image to QImage for display
+        height, width, channel = self.result.shape
+        bytes_per_line = 3 * width
+        image = QImage(self.result.data, width, height, bytes_per_line, QImage.Format_RGB888)
+
+        return image
+
+
+    @Slot()
+    def imageCapturedText(self, image):
         # Slot to handle captured images
         # Add text to the image
         self.question = self.questions.get_question()
-        if (self.loop and self.isStartGameOne):
-            self.isTracking = False
-            #scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width() * 0.998,  Qt.SmoothTransformation)
-            if self.timerCount and not self.endQuestion :
-                if time.time() - self.timerQuest > 1:
-                    self.number -=1
-                    self.timerQuest = time.time()
-                self.text = str(self.number)
-            if self.number < 0 and not self.showQuestion and not self.endQuestion:
-                self.timerCount = False
-                self.showQuestion = True
+        if self.timerCount and not self.endQuestion :
+            if time.time() - self.timerQuest > 1:
+                self.number -=1
+                self.timerQuest = time.time()
+            self.text = str(self.number)
+        if self.number < 0 and not self.showQuestion and not self.endQuestion:
+            self.timerCount = False
+            self.showQuestion = True
+            self.text = self.question['question']
+            self.answer_1 = self.question['answers'][0]
+            self.answer_2 = self.question['answers'][1]
+            self.answer_3 = self.question['answers'][2]
+            self.right_answer = self.answer_1
+            self.timerQuest = time.time()
+            self.timerAnswer = time.time()
+            self.showAnswer = False
+        if self.showQuestion:
+            if time.time() - self.timerQuest > self.delayQuestion:
                 self.text = self.question['question']
+                self.right_answer = self.question['answers'][0]
+                random.shuffle(self.question["answers"])
                 self.answer_1 = self.question['answers'][0]
                 self.answer_2 = self.question['answers'][1]
                 self.answer_3 = self.question['answers'][2]
-                self.right_answer = self.answer_1
                 self.timerQuest = time.time()
                 self.timerAnswer = time.time()
                 self.showAnswer = False
-            if self.showQuestion:
-                if time.time() - self.timerQuest > self.delayQuestion:
-                    self.text = self.question['question']
-                    self.right_answer = self.question['answers'][0]
-                    random.shuffle(self.question["answers"])
-                    self.answer_1 = self.question['answers'][0]
-                    self.answer_2 = self.question['answers'][1]
-                    self.answer_3 = self.question['answers'][2]
-                    self.timerQuest = time.time()
-                    self.timerAnswer = time.time()
-                    self.showAnswer = False
-                    self.number = -1
-                    self.countQuestion += 1
-                    self.position = -1
-                    self.answerId = -1
-                    self.answerFound = ""
-                if time.time() - self.timerAnswer > self.delayAnswer:
-                    # Get the current position of the mouse
-                    if (self.position == -1):
-                        self.position = QCursor.pos().x()
-                        if (self.position < self._ui.viewfinder.size().width()/3):
-                            self.answerFound = self.answer_1
-                        elif (self.position < 2*self._ui.viewfinder.size().width()/3):
-                            self.answerFound = self.answer_2
-                        else:   
-                            self.answerFound = self.answer_3
-                    self.showAnswer = True
+                self.number = -1
+                self.countQuestion += 1
+                self.position = -1
+                self.answerId = -1
+                self.answerFound = ""
+            if time.time() - self.timerAnswer > self.delayAnswer:
+                # Get the current position of the mouse
+                if (self.position == -1):
+                    x_mean = 0
+                    for i in range(len(self.ids)):
+                        c = self.corners[i][0]
+                        x_mean += c[:, 0].mean()
+                    self.position = int(x_mean / len(self.ids))
+                    #self.position = QCursor.pos().x()
+                    if (self.position < self._ui.viewfinder.size().width()/3):
+                        self.answerFound = self.answer_1
+                    elif (self.position < 2*self._ui.viewfinder.size().width()/3):
+                        self.answerFound = self.answer_2
+                    else:
+                        self.answerFound = self.answer_3
+                self.showAnswer = True
 
-            image_with_text = self.addTextToImage(scaled_image, self.text, (Qt.AlignTop| Qt.AlignHCenter))
-            if self.showQuestion:
-                self.id = 1
-                image_with_text = self.addTextToImage(image_with_text, self.answer_1,  Qt.AlignVCenter | Qt.AlignLeft, self.color)
-                self.id = 2
-                image_with_text = self.addTextToImage(image_with_text, self.answer_2, Qt.AlignVCenter | Qt.AlignHCenter,self.color)
-                self.id = 3
-                image_with_text = self.addTextToImage(image_with_text, self.answer_3, Qt.AlignVCenter | Qt.AlignRight,self.color)
-                self.id = 0
-            if self.countQuestion > self.maxQuestion +1:
-                self.countQuestion = 0
-                self.showQuestion = False
-                self.endQuestion = True
-                self.timerCount = False
-                self.isStartGameOne = False
-                self._ui.trackingCheckBox.setEnabled(True)
-                self._ui.statsCheckBox.setEnabled(True)
-                self.text = "End of Question"
-            
+        image_with_text = self.addTextToImage(image, self.text, (Qt.AlignTop| Qt.AlignHCenter))
+        if self.showQuestion:
+            self.id = 1
+            image_with_text = self.addTextToImage(image_with_text, self.answer_1,  Qt.AlignVCenter | Qt.AlignLeft, self.color)
+            self.id = 2
+            image_with_text = self.addTextToImage(image_with_text, self.answer_2, Qt.AlignVCenter | Qt.AlignHCenter,self.color)
+            self.id = 3
+            image_with_text = self.addTextToImage(image_with_text, self.answer_3, Qt.AlignVCenter | Qt.AlignRight,self.color)
+            self.id = 0
+        if self.countQuestion > self.maxQuestion +1:
+            self.countQuestion = 0
+            self.showQuestion = False
+            self.endQuestion = True
+            self.timerCount = False
+            self.isStartGameOne = False
+            self._ui.trackingCheckBox.setEnabled(True)
+            self._ui.statsCheckBox.setEnabled(True)
+            self.text = "End of Question"
 
-            # Display the modified image
-            self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image_with_text))
+        return image_with_text
 
-            # Display captured image for 4 seconds.
-            self.displayCapturedImage()
+
         
     @Slot()
     def addTextToImage(self, image, text, position, color = "white"):
@@ -599,7 +611,6 @@ class Camera(QMainWindow):
         self.isStartGameOne = True
         self._ui.trackingCheckBox.setEnabled(False)
         self._ui.statsCheckBox.setEnabled(False)
-        #self.isTracking = True
         self.captureFrameLoop()
 
     @Slot()
@@ -627,16 +638,13 @@ class Camera(QMainWindow):
     @Slot()
     def displayTracking(self):
         if not self.isDisplayTracking:
-            self.isTracking = True
             self.isDisplayTracking = True
             self.captureFrameLoop()
-            print("Displaying tracking")
         else:
             self.isDisplayTracking = False
             self.loop = False
             self.timerLoop.stop()
             self.displayViewfinder()
-            print("Not displaying tracking")
 
     @Slot()
     def displayStats(self):
