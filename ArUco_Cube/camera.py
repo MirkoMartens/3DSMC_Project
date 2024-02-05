@@ -273,9 +273,18 @@ class Camera(QMainWindow):
 
         # Ensure self.result is initialized as a NumPy array
         self.result = image.copy()
-
+        self.undistort = None
+        if self.isCameraCalibrated:
+            # Undistort the image
+            # Set newCameraMatrix to be the same as camera_matrix
+            height, width = self.result.shape[:2]
+            #newCameraMatrix, _ = cv2.getOptimalNewCameraMatrix(self.camera_matrix, self.distortion_coefficients, (width, height), 1, (width, height))
+            #self.undistort = cv2.undistort(self.result, self.camera_matrix, self.distortion_coefficients, None, newCameraMatrix)
+            self.undistort = cv2.undistort(self.result, self.camera_matrix, self.distortion_coefficients, None)
+        else:
+            self.undistort = self.result
         # Show image with detected markers
-        cv2.aruco.drawDetectedMarkers(self.result, self.corners, self.ids)
+        cv2.aruco.drawDetectedMarkers(self.undistort, self.corners, self.ids)
 
         # Convert the modified image to QImage for display
         height, width, channel = self.result.shape
