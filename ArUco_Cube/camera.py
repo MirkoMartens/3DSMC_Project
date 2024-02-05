@@ -372,6 +372,8 @@ class Camera(QMainWindow):
                                 c = self.corners[i][0]
                                 x_mean += c[:, 0].mean()
                             self.position = int(x_mean / len(self.ids))
+                            # for test purpose when you don't have a cube
+                            #self.position = QCursor.pos().x() - self._ui.viewfinder.mapToGlobal(self._ui.viewfinder.pos()).x()
                             if (self.position < self._ui.viewfinder.size().width()/3):
                                 self.answerFound = self.answer_1
                             elif (self.position < 2*self._ui.viewfinder.size().width()/3):
@@ -446,8 +448,10 @@ class Camera(QMainWindow):
         painter.setFont(font)
         width,height = pixmap.width(), pixmap.height()
         if self.id > 0:
-            rectangle = painter.drawText(pixmap.rect(),position, text)
-            painter.setPen("black")
+            #rectangle = painter.drawText(pixmap.rect(),position, text)
+            #painter.fillRect(rectangle, QColor("black"))
+            #painter.setPen("white")
+            #painter.drawText(pixmap.rect(),position, text)
             if self.showAnswer:
                 if self.id == 1 and self.right_answer == self.answer_1:
                     color = QColor("green")
@@ -458,20 +462,29 @@ class Camera(QMainWindow):
                 else:
                     color = QColor("red")
                 if (self.right_answer == self.answerFound):
+                    painter.setPen("green")
                     painter.drawText(width/2,height/3, "Correct")
                 else:
+                    painter.setPen("red")
                     painter.drawText(width/2,height/3, "Wrong")
             else:
-                color = QColor("black")
+                color = QColor(QColor(240, 240, 240))
 
             painter.setPen(color)
-            
+            rectangle = painter.drawText(pixmap.rect(),position, text)
+            painter.fillRect(rectangle,color)
             painter.drawRect(rectangle)
+
+            painter.setPen("black")
+            painter.drawText(pixmap.rect(),position, text)
 
         # Draw the overlay text at the bottom of the image
         else:
-            painter.setPen(color)
+            rectangle = painter.drawText(pixmap.rect(),position, text)
+            painter.fillRect(rectangle, QColor(240, 240, 240))
+            painter.setPen("black")
             painter.drawText(pixmap.rect(),position, text)
+            painter.setPen("black")
             painter.drawLine(0,height *0.1,width,height *0.1)
             painter.drawLine(width/3,height *0.1,width/3,height)
             painter.drawLine(2*width/3,height *0.1,2*width/3,height)
@@ -721,6 +734,26 @@ class Camera(QMainWindow):
         self.showQuestion = False
         self.number = self.waitMax
         self.timerCount = False
+        self.timerQuest = None
+        self.timerQuestGuest = None
+        self.number = self.waitMax
+        self.delayQuestion = 10
+        self.showQuestion = False
+        self.endQuestion = False
+        self.showResult = False
+        self.endGame = False
+        self.color = "white"
+        self.showAnswer = False
+        self.position = -1
+        self.delayAnswer = 5
+        self.id = 0
+        self.answerFound = ""
+        self.timerAnswer = None
+        self.countQuestion = 0
+        self.maxQuestion = 10
+        self.user_score = 0
+        self.loop = False
+        self.numberGuess = self.delayAnswer
         self.updateCameraActive(self.m_camera.isActive())
         self._ui.trackingCheckBox.setEnabled(True)
         if self.isCameraCalibrated:
