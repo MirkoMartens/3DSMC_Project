@@ -101,16 +101,17 @@ class Camera(QMainWindow):
         self.isStartGameOne = False
 
         # create variables for CheckBox
-        self.isTracking = False
         self.isDisplayTracking = False
         self.isDisplayStats = False
 
         # create variables for ArUco
         self.arucoDict = cv2.aruco.DICT_4X4_50
         self.aruco_dict =  cv2.aruco.getPredefinedDictionary(self.arucoDict)
+
         self.corners = None
         self.ids = None
         self.rejected = None
+
         self.result = None
 
         # create variables for json dump
@@ -167,8 +168,7 @@ class Camera(QMainWindow):
             self.m_imageCapture.readyForCaptureChanged.connect(self.readyForCapture)
             self.m_captureSession.setImageCapture(self.m_imageCapture)
             self.m_imageCapture.imageCaptured.connect(self.processCapturedImage)
-            self.m_imageCapture.imageCaptured.connect(self.drawArucoMarkers)
-            self.m_imageCapture.imageCaptured.connect(self.imageCapturedText)
+            self.m_imageCapture.imageCaptured.connect(self.processFrame)
             self.m_imageCapture.imageSaved.connect(self.imageSaved)
             self.m_imageCapture.errorOccurred.connect(self.displayCaptureError)
 
@@ -227,41 +227,55 @@ class Camera(QMainWindow):
             self.timerLoop.start(20) 
             
         self.m_imageCapture.capture() 
-            
+
     @Slot()
-    def drawArucoMarkers(self, requestId, image):
-        if self.isTracking:
-            image = scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width()*0.998,  Qt.SmoothTransformation)
-            # Convert QImage to NumPy array
-            image_array = np.array(scaled_image.constBits()).reshape(scaled_image.height(), scaled_image.width(), 4).copy()  # Assuming the image is RGBA
-            # Convert RGBA to BGR (OpenCV uses BGR)
-            opencv_image = cv2.cvtColor(image_array, cv2.COLOR_RGBA2RGB)
+    def processFrame(self, requestId, image):
+        image = scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width()*0.998,  Qt.SmoothTransformation)
+        # Convert QImage to NumPy array
+        image_array = np.array(scaled_image.constBits()).reshape(scaled_image.height(), scaled_image.width(), 4).copy()  # Assuming the image is RGBA
+        # Convert RGBA to BGR (OpenCV uses BGR)
+        opencv_image = cv2.cvtColor(image_array, cv2.COLOR_RGBA2RGB)
 
-            # Detect Aruco markers
-            self.corners, self.ids, self.rejected = cv2.aruco.detectMarkers(opencv_image, self.aruco_dict)
+        # Detect Aruco markers
+        tmp_corners, tmp_ids, tmp_rejected = cv2.aruco.detectMarkers(opencv_image, self.aruco_dict)
 
-            # Draw detected markers
-            if self.isDisplayTracking:
-                # Ensure self.result is initialized as a NumPy array
-                self.result = opencv_image.copy()
+        # Only update values if marker was detected
+        if tmp_ids is not None:
+            self.corners, self.ids, self.rejected = tmp_corners, tmp_ids, tmp_rejected
 
-                # Show image with detected markers
-                cv2.aruco.drawDetectedMarkers(self.result, self.corners, self.ids)
+        if self.isDisplayTracking:
+            image = self.drawArucoMarkers(opencv_image)
 
-                # Convert the modified image to QImage for display
-                height, width, channel = self.result.shape
-                bytes_per_line = 3 * width
-                image = QImage(self.result.data, width, height, bytes_per_line, QImage.Format_RGB888)
+        if self.isStartGameOne:
+            image = self.imageCapturedText(image)
 
-                # Display the image
-                self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image))
-                self.displayCapturedImage()
-            else:
-                self.displayViewfinder()
+        if self.isStartGameOne or self.isDisplayTracking:
+            # Display captured image for 4 seconds.
+            self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image))
+            self.displayCapturedImage()
+        else:
+            self.displayViewfinder()
 
 
     @Slot()
-    def imageCapturedText(self, request_id, image):
+    def drawArucoMarkers(self, image):
+
+        # Ensure self.result is initialized as a NumPy array
+        self.result = image.copy()
+
+        # Show image with detected markers
+        cv2.aruco.drawDetectedMarkers(self.result, self.corners, self.ids)
+
+        # Convert the modified image to QImage for display
+        height, width, channel = self.result.shape
+        bytes_per_line = 3 * width
+        image = QImage(self.result.data, width, height, bytes_per_line, QImage.Format_RGB888)
+
+        return image
+
+
+    @Slot()
+    def imageCapturedText(self, image):
         # Slot to handle captured images
         # Add text to the image
         self.question = self.questions.get_question()
@@ -657,7 +671,6 @@ class Camera(QMainWindow):
         self.isStartGameOne = True
         self._ui.trackingCheckBox.setEnabled(False)
         self._ui.statsCheckBox.setEnabled(False)
-        #self.isTracking = True
         self.captureFrameLoop()
 
     @Slot()
@@ -685,16 +698,13 @@ class Camera(QMainWindow):
     @Slot()
     def displayTracking(self):
         if not self.isDisplayTracking:
-            self.isTracking = True
             self.isDisplayTracking = True
             self.captureFrameLoop()
-            print("Displaying tracking")
         else:
             self.isDisplayTracking = False
             self.loop = False
             self.timerLoop.stop()
             self.displayViewfinder()
-            print("Not displaying tracking")
 
     @Slot()
     def displayStats(self):
