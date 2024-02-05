@@ -19,15 +19,12 @@ def read_chessboards(dir):
     # SUB PIXEL CORNER DETECTION CRITERION
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.00001)
 
-    images = np.array([dir + f for f in os.listdir(dir) if f.endswith(".jpg") or f.endswith(".png")])
-
-    print("Images: ", images)
+    images = np.array([os.path.join(dir, f) for f in os.listdir(dir) if f.endswith(".jpg") or f.endswith(".png")])
 
     if len(images) == 0:
         print("NO IMAGES FOUND!!")
         return None, None, None
     for im in images:
-        print("=> Processing image {0}".format(im))
         frame = cv2.imread(im)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         corners, ids, _ = cv2.aruco.detectMarkers(gray, aruco_dict)
@@ -70,7 +67,7 @@ def calibrate_camera(allCorners,allIds,imsize):
     distCoeffsInit = np.zeros((5,1))
     flags = (cv2.CALIB_USE_INTRINSIC_GUESS + cv2.CALIB_RATIONAL_MODEL + cv2.CALIB_FIX_ASPECT_RATIO)
 
-    (ret, camera_matrix, distortion_coefficients0,
+    (ret, camera_matrix, distortion_coefficients,
      rotation_vectors, translation_vectors, _, _, _) = cv2.aruco.calibrateCameraCharucoExtended(
                       charucoCorners=allCorners,
                       charucoIds=allIds,

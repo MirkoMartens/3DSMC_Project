@@ -1,5 +1,4 @@
-# Copyright (C) 2023 The Qt Company Ltd.
-# SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
+# GNU Lesser General Public License Version 3
 
 import os
 from pathlib import Path
@@ -103,6 +102,7 @@ class Camera(QMainWindow):
         # create variables for CheckBox
         self.isDisplayTracking = False
         self.isDisplayStats = False
+        self.isCameraCalibrated = False
 
         # create variables for ArUco
         self.arucoDict = cv2.aruco.DICT_4X4_50
@@ -117,9 +117,20 @@ class Camera(QMainWindow):
         # create variables for json dump
         self.saver_reader = SaverReader("json_dump.json")
 
+        # create variables for stats
+        self.retval = None
+        self.rvec = None
+        self.tvec = None
+
         # disable all buttons by default
         self.updateCameraActive(False)
         self.readyForCapture(False)
+
+        # game two not implemented
+        self._ui.gameButton_2.setEnabled(False)
+
+        # disable stats checkbox
+        self._ui.statsCheckBox.setEnabled(False)
 
         # try to actually initialize camera & mic
 
@@ -158,7 +169,6 @@ class Camera(QMainWindow):
         if not self.m_mediaRecorder:
             self.m_mediaRecorder = QMediaRecorder()
             self.m_captureSession.setRecorder(self.m_mediaRecorder)
-            #self.m_mediaRecorder.recorderStateChanged.connect(self.updateRecorderState)
             self.m_mediaRecorder.durationChanged.connect(self.updateRecordTime)
             self.m_mediaRecorder.errorChanged.connect(self.displayRecorderError)
 
@@ -176,17 +186,16 @@ class Camera(QMainWindow):
         self.m_captureSession.setVideoOutput(self._ui.viewfinder)
 
         self.updateCameraActive(self.m_camera.isActive())
-        #self.updateRecorderState(self.m_mediaRecorder.recorderState())
         self.readyForCapture(self.m_imageCapture.isReadyForCapture())
         self.updateCaptureMode()
         self.m_camera.start()
-         # Create a QTimer to trigger the capture at regular intervals (e.g., every second)
+        # Create a QTimer to trigger the capture at regular intervals (e.g., every second)
         self.loop = False
         # Define the calibration varibales
         self.calibration = False
         self.countCalibrate = 1
         # Define the number of photos that you want
-        self.numPhotosCalibrate = 10
+        self.numPhotosCalibrate = 15
         # Define the delay between each photo
         self.delayPhotos = 3000
         """self.timer = QTimer(self.m_camera)
@@ -246,6 +255,9 @@ class Camera(QMainWindow):
         if self.isDisplayTracking:
             image = self.drawArucoMarkers(opencv_image)
 
+        if self.isCameraCalibrated and self.isDisplayStats:
+            self.drawDisplayStats(image)
+
         if self.isStartGameOne:
             image = self.imageCapturedText(image)
 
@@ -255,7 +267,6 @@ class Camera(QMainWindow):
             self.displayCapturedImage()
         else:
             self.displayViewfinder()
-
 
     @Slot()
     def drawArucoMarkers(self, image):
@@ -273,6 +284,31 @@ class Camera(QMainWindow):
 
         return image
 
+    @Slot()
+    def drawDisplayStats(self, image):
+
+        # only display stats if marker was detected beforehand
+        if self.ids is not None:
+            # Ensure self.result is initialized as a NumPy array
+            self.result = image.copy()
+
+            # Create Aruco markers in World Coordinates
+            objectPoints = np.array([[0,0,0],[6,0,0],[6,6,0],[0,6,0]])
+
+            # Change to float32 for cv2.solvePnP
+            objectPoints = objectPoints.astype('float32')
+            corners = self.corners[0][0].astype('float32')
+
+            # solvePnp
+            tmp_retval, tmp_rvec, tmp_tvec = cv2.solvePnP(objectPoints, self.corners[0][0], self.camera_matrix, self.distortion_coefficients)
+
+            # Only update values if stat not none
+            if tmp_retval is not None:
+                self.retval, self.rvec, self.tvec = tmp_retval, tmp_rvec, tmp_tvec
+                self._ui.x_label.setText("x: {}".format(self.tvec[0]))
+                self._ui.y_label.setText("y: {}".format(self.tvec[1]))
+                self._ui.z_label.setText("z: {}".format(self.tvec[2]))
+
 
     @Slot()
     def imageCapturedText(self, image):
@@ -282,8 +318,6 @@ class Camera(QMainWindow):
         if (not self.endGame):
             if (self.loop and self.isStartGameOne):
                 self.isTracking = False
-                #scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width() * 0.998,  Qt.SmoothTransformation)
                 if self.timerCount and not self.endQuestion :
                     if time.time() - self.timerQuest > 1:
                         self.number -=1
@@ -333,7 +367,11 @@ class Camera(QMainWindow):
                         # Get the current position of the mouse
                         if (self.position == -1):
                             # this just gets called once as soon as the question time is over
-                            self.position = QCursor.pos().x()
+                            x_mean = 0
+                            for i in range(len(self.ids)):
+                                c = self.corners[i][0]
+                                x_mean += c[:, 0].mean()
+                            self.position = int(x_mean / len(self.ids))
                             if (self.position < self._ui.viewfinder.size().width()/3):
                                 self.answerFound = self.answer_1
                             elif (self.position < 2*self._ui.viewfinder.size().width()/3):
@@ -348,42 +386,34 @@ class Camera(QMainWindow):
                             self.saver_reader.save_question(self.question['question'], self.answerFound, self.right_answer, self.wrong_answer1, self.wrong_answer2)
                         self.showAnswer = True
 
-                image_with_text = self.addTextToImage(scaled_image, self.text, (Qt.AlignTop| Qt.AlignHCenter))
-                image_with_text = self.addTextToImage(image_with_text,str(self.user_score), (Qt.AlignTop| Qt.AlignRight))
+                image = self.addTextToImage(image, self.text, (Qt.AlignTop| Qt.AlignHCenter))
+                image = self.addTextToImage(image,str(self.user_score), (Qt.AlignTop| Qt.AlignRight))
                 if self.showQuestion:
                     self.id = 1
-                    image_with_text = self.addTextToImage(image_with_text, self.answer_1,  Qt.AlignVCenter | Qt.AlignLeft, self.color)
+                    image = self.addTextToImage(image, self.answer_1,  Qt.AlignVCenter | Qt.AlignLeft, self.color)
                     self.id = 2
-                    image_with_text = self.addTextToImage(image_with_text, self.answer_2, Qt.AlignVCenter | Qt.AlignHCenter,self.color)
+                    image = self.addTextToImage(image, self.answer_2, Qt.AlignVCenter | Qt.AlignHCenter,self.color)
                     self.id = 3
-                    image_with_text = self.addTextToImage(image_with_text, self.answer_3, Qt.AlignVCenter | Qt.AlignRight,self.color)
+                    image = self.addTextToImage(image, self.answer_3, Qt.AlignVCenter | Qt.AlignRight,self.color)
                     self.id = 0
                     if (self.numberGuess <= 0):
                         self.numberGuess = self.delayQuestion - self.delayAnswer
                         self.textTimer = str(self.numberGuess)
-                    image_with_text = self.addTextToImage(image_with_text, self.textTimer, Qt.AlignTop | Qt.AlignLeft,self.color)
+                    image = self.addTextToImage(image, self.textTimer, Qt.AlignTop | Qt.AlignLeft,self.color)
                 if self.countQuestion > self.maxQuestion:
                     self.saver_reader.finish_json() # necessary to make the json file correct                
                     self.countQuestion = 0
                     self.showQuestion = False
                     self.endQuestion = True
                     self.timerCount = False
-                    self.isStartGameOne = False
                     self._ui.trackingCheckBox.setEnabled(True)
                     self._ui.statsCheckBox.setEnabled(True)
                     self.text = "End of Question"
                     self.endGame = True 
                     self.timerCount = -1
-                else:
-                    # Display the modified image
-                    self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image_with_text))
-
-                    # Display captured image for 4 seconds.
-                    self.displayCapturedImage()
         else:
             self.text = "Make a winner pose"
-            scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width() * 0.998,  Qt.SmoothTransformation)
-            image_with_text = self.addTextToImage(scaled_image, self.text, Qt.AlignVCenter | Qt.AlignHCenter,self.color)
+            image = self.addTextToImage(image, self.text, Qt.AlignVCenter | Qt.AlignHCenter,self.color)
             if (self.timerCount < 0):
                 self.timerQuest = time.time()
                 self.timerCount = 5
@@ -393,10 +423,11 @@ class Camera(QMainWindow):
             if (self.timerCount == 0):
                 self.timerLoop.stop()
                 text = " Wow! You reached an impressive score of " + str(self.user_score)
-                image_with_text = self.addTextToImage(scaled_image, text, Qt.AlignTop | Qt.AlignHCenter,self.color)
+                image = self.addTextToImage(image, text, Qt.AlignTop | Qt.AlignHCenter,self.color)
             else:
-                image_with_text = self.addTextToImage(image_with_text, str(self.timerCount), Qt.AlignTop | Qt.AlignHCenter,self.color)
-            self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image_with_text))
+                image = self.addTextToImage(image, str(self.timerCount), Qt.AlignTop | Qt.AlignHCenter,self.color)
+
+        return image
 
 
         
@@ -456,6 +487,7 @@ class Camera(QMainWindow):
 
     @Slot()
     def takeCalibrationImages(self):
+        print("Start taking calibration images... ")
         self.calibration = True
         self.timer = QTimer(self.m_camera)
         self.timer.timeout.connect(self.takeCalibrationImage)
@@ -463,8 +495,12 @@ class Camera(QMainWindow):
         self.timer.start(self.delayPhotos)
 
     def calibrate(self):
-        self.ret, self.camera_matrix, self.distortion_coefficients0, self.rotation_vectors, self.translation_vectors = start_calibration(os.path.join(os.path.dirname(__file__), "images", "calibration"))
-        print("CALIBRATION MATRIX: ", mtx)
+        print("Starting calibration... ")
+        self.ret, self.camera_matrix, self.distortion_coefficients, self.rotation_vectors, self.translation_vectors = start_calibration(os.path.join(os.path.dirname(__file__), "images", "calibration"))
+        print("CALIBRATION MATRIX: ", self.camera_matrix)
+        self.isCameraCalibrated = True
+        self._ui.statsCheckBox.setEnabled(True)
+
 
     @Slot()
     def updateRecordTime(self):
@@ -528,7 +564,6 @@ class Camera(QMainWindow):
 
     def takeCalibrationImage(self):
         self.m_isCapturingImage = True
-        print(os.path.join(os.path.dirname(__file__), "images", "calibration"))
         self.m_imageCapture.captureToFile(os.path.join(os.path.dirname(__file__), "images", "calibration"))
         if (self.calibration and self.countCalibrate < self.numPhotosCalibrate):
             # Define the time to sleep before taking the next picture
@@ -542,6 +577,7 @@ class Camera(QMainWindow):
 
     @Slot(int, QImageCapture.Error, str)
     def displayCaptureError(self, id, error, errorString):
+        # DONT USE
         #QMessageBox.warning(self, "Image Capture Error", errorString)
         self.m_isCapturingImage = False
 
@@ -681,18 +717,14 @@ class Camera(QMainWindow):
         
     @Slot()
     def quitGame(self):
-        self.loop = False
         self.isStartGameOne = False
-        self.timerLoop.stop()
         self.showQuestion = False
         self.number = self.waitMax
         self.timerCount = False
-        self.displayViewfinder()
         self.updateCameraActive(self.m_camera.isActive())
-        self._ui.trackingCheckBox.setCheckState(Qt.Unchecked)
-        self.isDisplayTracking = False
         self._ui.trackingCheckBox.setEnabled(True)
-        self._ui.statsCheckBox.setEnabled(True)
+        if self.isCameraCalibrated:
+            self._ui.statsCheckBox.setEnabled(True)
         self.displayViewfinder()
 
     @Slot()
@@ -710,7 +742,13 @@ class Camera(QMainWindow):
     def displayStats(self):
         if not self.isDisplayStats:
             self.isDisplayStats = True
-            print("Not displaying stats")
+            self.captureFrameLoop()
         else:
             self.isDisplayStats = False
-            print("Displaying stats")
+            self._ui.x_label.setText("x: 0")
+            self._ui.y_label.setText("y: 0")
+            self._ui.z_label.setText("z: 0")
+            self.loop = False
+            self.timerLoop.stop()
+            self.displayViewfinder()
+

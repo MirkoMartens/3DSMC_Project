@@ -26,34 +26,10 @@
           </property>
          </widget>
         </item>
-        <item row="6" column="0">
-         <widget class="QCheckBox" name="trackingCheckBox">
-          <property name="text">
-           <string>Display Tracking</string>
-          </property>
-         </widget>
-        </item>
-        <item row="9" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Exposure Compensation:</string>
-          </property>
-         </widget>
-        </item>
         <item row="3" column="0">
          <widget class="QPushButton" name="captureCalibrationButton">
           <property name="text">
            <string>Capture Calibration</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QPushButton" name="takeImageButton">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Capture Photo</string>
           </property>
          </widget>
         </item>
@@ -64,14 +40,7 @@
           </property>
          </widget>
         </item>
-        <item row="7" column="0">
-         <widget class="QCheckBox" name="statsCheckBox">
-          <property name="text">
-           <string>Display Stats</string>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="0">
+        <item row="11" column="0">
          <spacer name="verticalSpacer_2">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -84,14 +53,7 @@
           </property>
          </spacer>
         </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="gameButton_1">
-          <property name="text">
-           <string>Start Game 1</string>
-          </property>
-         </widget>
-        </item>
-        <item row="10" column="0">
+        <item row="13" column="0">
          <widget class="QSlider" name="exposureCompensation">
           <property name="minimum">
            <number>-4</number>
@@ -110,10 +72,69 @@
           </property>
          </widget>
         </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="x_label">
+          <property name="text">
+           <string>x: 0</string>
+          </property>
+         </widget>
+        </item>
         <item row="5" column="0">
          <widget class="QPushButton" name="quitButton">
           <property name="text">
            <string>Quit</string>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Exposure Compensation:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QCheckBox" name="statsCheckBox">
+          <property name="text">
+           <string>Display Stats</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="0">
+         <widget class="QLabel" name="y_label">
+          <property name="text">
+           <string>y: 0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QCheckBox" name="trackingCheckBox">
+          <property name="text">
+           <string>Display Tracking</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="gameButton_1">
+          <property name="text">
+           <string>Start Game 1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QPushButton" name="takeImageButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Capture Photo</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="0">
+         <widget class="QLabel" name="z_label">
+          <property name="text">
+           <string>z: 0</string>
           </property>
          </widget>
         </item>
@@ -250,7 +271,7 @@
      <x>0</x>
      <y>0</y>
      <width>1132</width>
-     <height>30</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

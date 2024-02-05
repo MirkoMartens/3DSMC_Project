@@ -8,6 +8,7 @@
         "imagesettings.ui",
         "metadatadialog.py",
         "videosettings.py",
-        "videosettings.ui"
+        "videosettings.ui",
+        "calibration.py"
     ]
 }
