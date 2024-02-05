@@ -392,7 +392,7 @@ class Camera(QMainWindow):
                 self.timerCount -= 1 
             if (self.timerCount == 0):
                 self.timerLoop.stop()
-                text = " Your wonderful shitty score is " + str(self.user_score)
+                text = " Wow! You reached an impressive score of " + str(self.user_score)
                 image_with_text = self.addTextToImage(scaled_image, text, Qt.AlignTop | Qt.AlignHCenter,self.color)
             else:
                 image_with_text = self.addTextToImage(image_with_text, str(self.timerCount), Qt.AlignTop | Qt.AlignHCenter,self.color)
