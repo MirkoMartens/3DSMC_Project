@@ -31,6 +31,7 @@ import Questions
 
 
 from calibration import start_calibration
+from QeA import SaverReader
 
 class Camera(QMainWindow):
     def __init__(self):
@@ -52,12 +53,14 @@ class Camera(QMainWindow):
         self._ui = Ui_Camera()
         self.timerCount = False
         self.timerQuest = None
+        self.timerQuestGuest = None
         self.waitMax = 1
         self.number = self.waitMax
         self.delayQuestion = 10
         self.showQuestion = False
         self.endQuestion = False
         self.showResult = False
+        self.endGame = False
         self.color = "white"
         self.showAnswer = False
         self.position = -1
@@ -67,6 +70,8 @@ class Camera(QMainWindow):
         self.timerAnswer = None
         self.countQuestion = 0
         self.maxQuestion = 10
+        self.user_score = 0
+        self.numberGuess = self.delayAnswer
         self._ui.setupUi(self)
         image = os.path.join(Path(__file__).parent, "shutter.svg")
         self._ui.takeImageButton.setIcon(QIcon(os.fspath(image)))
@@ -77,10 +82,13 @@ class Camera(QMainWindow):
         self.questions = Questions.Questions(self.filePath)
         self.question = None
         self.text =""
+        self.textTimer = ""
         self.answer_1 = ""
         self.answer_2 = ""
         self.answer_3 = ""
         self.right_answer = ""
+        self.wrong_answer1 = ""
+        self.wrong_answer2 = ""
 
         # create variables to store calibration variables
         self.ret = None
@@ -104,6 +112,9 @@ class Camera(QMainWindow):
         self.ids = None
         self.rejected = None
         self.result = None
+
+        # create variables for json dump
+        self.saver_reader = SaverReader("json_dump.json")
 
         # disable all buttons by default
         self.updateCameraActive(False)
@@ -254,79 +265,126 @@ class Camera(QMainWindow):
         # Slot to handle captured images
         # Add text to the image
         self.question = self.questions.get_question()
-        if (self.loop and self.isStartGameOne):
-            self.isTracking = False
-            #scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width() * 0.998,  Qt.SmoothTransformation)
-            if self.timerCount and not self.endQuestion :
-                if time.time() - self.timerQuest > 1:
-                    self.number -=1
-                    self.timerQuest = time.time()
-                self.text = str(self.number)
-            if self.number < 0 and not self.showQuestion and not self.endQuestion:
-                self.timerCount = False
-                self.showQuestion = True
-                self.text = self.question['question']
-                self.answer_1 = self.question['answers'][0]
-                self.answer_2 = self.question['answers'][1]
-                self.answer_3 = self.question['answers'][2]
-                self.right_answer = self.answer_1
-                self.timerQuest = time.time()
-                self.timerAnswer = time.time()
-                self.showAnswer = False
-            if self.showQuestion:
-                if time.time() - self.timerQuest > self.delayQuestion:
+        if (not self.endGame):
+            if (self.loop and self.isStartGameOne):
+                self.isTracking = False
+                #scaled_image = image.scaled(self._ui.viewfinder.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width() * 0.998,  Qt.SmoothTransformation)
+                if self.timerCount and not self.endQuestion :
+                    if time.time() - self.timerQuest > 1:
+                        self.number -=1
+                        self.timerQuest = time.time()
+                    self.text = str(self.number)
+                else:
+                    if time.time() - self.timerQuestGuest > 1:
+                        self.numberGuess -=1
+                        self.timerQuestGuest = time.time()
+                    self.textTimer = str(self.numberGuess)
+                if self.number < 0 and not self.showQuestion and not self.endQuestion:
+                    self.timerCount = False
+                    self.showQuestion = True
+
                     self.text = self.question['question']
-                    self.right_answer = self.question['answers'][0]
-                    random.shuffle(self.question["answers"])
                     self.answer_1 = self.question['answers'][0]
                     self.answer_2 = self.question['answers'][1]
                     self.answer_3 = self.question['answers'][2]
+                    self.right_answer = self.answer_1
                     self.timerQuest = time.time()
                     self.timerAnswer = time.time()
+                    self.timerQuestGuest = time.time()
+                    self.countQuestion +=1
                     self.showAnswer = False
-                    self.number = -1
-                    self.countQuestion += 1
-                    self.position = -1
-                    self.answerId = -1
-                    self.answerFound = ""
-                if time.time() - self.timerAnswer > self.delayAnswer:
-                    # Get the current position of the mouse
-                    if (self.position == -1):
-                        self.position = QCursor.pos().x()
-                        if (self.position < self._ui.viewfinder.size().width()/3):
-                            self.answerFound = self.answer_1
-                        elif (self.position < 2*self._ui.viewfinder.size().width()/3):
-                            self.answerFound = self.answer_2
-                        else:   
-                            self.answerFound = self.answer_3
-                    self.showAnswer = True
+                if self.showQuestion:
+                    if time.time() - self.timerQuest > self.delayQuestion:
+                        self.text = self.question['question']
+                        self.right_answer = self.question['answers'][0]
+                        self.wrong_answer1 = self.question['answers'][1]
+                        self.wrong_answer2 = self.question['answers'][2]
+                        random.shuffle(self.question["answers"])
+                        self.answer_1 = self.question['answers'][0]
+                        self.answer_2 = self.question['answers'][1]
+                        self.answer_3 = self.question['answers'][2]
+                        self.timerQuest = time.time()
+                        self.timerAnswer = time.time()
+                        self.timerQuestGuest = time.time()
+                        self.showAnswer = False
+                        self.number = -1
+                        self.countQuestion += 1
+                        self.position = -1
+                        self.answerId = -1
+                        self.answerFound = ""
+                        self.textTimer = ""
+                        self.numberGuess = self.delayAnswer
+                    if time.time() - self.timerAnswer > self.delayAnswer:
+                        # Get the current position of the mouse
+                        if (self.position == -1):
+                            # this just gets called once as soon as the question time is over
+                            self.position = QCursor.pos().x()
+                            if (self.position < self._ui.viewfinder.size().width()/3):
+                                self.answerFound = self.answer_1
+                            elif (self.position < 2*self._ui.viewfinder.size().width()/3):
+                                self.answerFound = self.answer_2
+                            else:   
+                                self.answerFound = self.answer_3
 
-            image_with_text = self.addTextToImage(scaled_image, self.text, (Qt.AlignTop| Qt.AlignHCenter))
-            if self.showQuestion:
-                self.id = 1
-                image_with_text = self.addTextToImage(image_with_text, self.answer_1,  Qt.AlignVCenter | Qt.AlignLeft, self.color)
-                self.id = 2
-                image_with_text = self.addTextToImage(image_with_text, self.answer_2, Qt.AlignVCenter | Qt.AlignHCenter,self.color)
-                self.id = 3
-                image_with_text = self.addTextToImage(image_with_text, self.answer_3, Qt.AlignVCenter | Qt.AlignRight,self.color)
-                self.id = 0
-            if self.countQuestion > self.maxQuestion +1:
-                self.countQuestion = 0
-                self.showQuestion = False
-                self.endQuestion = True
-                self.timerCount = False
-                self.isStartGameOne = False
-                self._ui.trackingCheckBox.setEnabled(True)
-                self._ui.statsCheckBox.setEnabled(True)
-                self.text = "End of Question"
-            
+                            if self.answerFound == self.right_answer:
+                                self.user_score += 100
+                            
+                            # dumping the question, user answer and correct/wrong answer choices to a json
+                            self.saver_reader.save_question(self.question['question'], self.answerFound, self.right_answer, self.wrong_answer1, self.wrong_answer2)
+                        self.showAnswer = True
 
-            # Display the modified image
+                image_with_text = self.addTextToImage(scaled_image, self.text, (Qt.AlignTop| Qt.AlignHCenter))
+                image_with_text = self.addTextToImage(image_with_text,str(self.user_score), (Qt.AlignTop| Qt.AlignRight))
+                if self.showQuestion:
+                    self.id = 1
+                    image_with_text = self.addTextToImage(image_with_text, self.answer_1,  Qt.AlignVCenter | Qt.AlignLeft, self.color)
+                    self.id = 2
+                    image_with_text = self.addTextToImage(image_with_text, self.answer_2, Qt.AlignVCenter | Qt.AlignHCenter,self.color)
+                    self.id = 3
+                    image_with_text = self.addTextToImage(image_with_text, self.answer_3, Qt.AlignVCenter | Qt.AlignRight,self.color)
+                    self.id = 0
+                    if (self.numberGuess <= 0):
+                        self.numberGuess = self.delayQuestion - self.delayAnswer
+                        self.textTimer = str(self.numberGuess)
+                    image_with_text = self.addTextToImage(image_with_text, self.textTimer, Qt.AlignTop | Qt.AlignLeft,self.color)
+                if self.countQuestion > self.maxQuestion:
+                    self.saver_reader.finish_json() # necessary to make the json file correct                
+                    self.countQuestion = 0
+                    self.showQuestion = False
+                    self.endQuestion = True
+                    self.timerCount = False
+                    self.isStartGameOne = False
+                    self._ui.trackingCheckBox.setEnabled(True)
+                    self._ui.statsCheckBox.setEnabled(True)
+                    self.text = "End of Question"
+                    self.endGame = True 
+                    self.timerCount = -1
+                else:
+                    # Display the modified image
+                    self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image_with_text))
+
+                    # Display captured image for 4 seconds.
+                    self.displayCapturedImage()
+        else:
+            self.text = "Make a winner pose"
+            scaled_image = image.scaledToWidth(self._ui.viewfinder.size().width() * 0.998,  Qt.SmoothTransformation)
+            image_with_text = self.addTextToImage(scaled_image, self.text, Qt.AlignVCenter | Qt.AlignHCenter,self.color)
+            if (self.timerCount < 0):
+                self.timerQuest = time.time()
+                self.timerCount = 5
+            if time.time() - self.timerQuest > 1:
+                self.timerQuest = time.time()
+                self.timerCount -= 1 
+            if (self.timerCount == 0):
+                self.timerLoop.stop()
+                text = " Your wonderful shitty score is " + str(self.user_score)
+                image_with_text = self.addTextToImage(scaled_image, text, Qt.AlignTop | Qt.AlignHCenter,self.color)
+            else:
+                image_with_text = self.addTextToImage(image_with_text, str(self.timerCount), Qt.AlignTop | Qt.AlignHCenter,self.color)
             self._ui.lastImagePreviewLabel.setPixmap(QPixmap.fromImage(image_with_text))
 
-            # Display captured image for 4 seconds.
-            self.displayCapturedImage()
+
         
     @Slot()
     def addTextToImage(self, image, text, position, color = "white"):

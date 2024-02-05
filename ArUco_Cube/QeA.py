@@ -8,34 +8,27 @@ class SaverReader:
 
     def __init__(self, file_path):
         self.file_path = file_path
-        self.data = self.load_questions()
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        with open(self.file_path, 'a') as f:
+            f.write("[")
 
-    def load_questions(self):
+
+
+    def save_question(self, question, user_answer, right_answer, wrong_answer1, wrong_answer2):
+        question = {'question': question, 'user_answer': user_answer, 'right_answer': right_answer, 'wrong_answer1': wrong_answer1, 'wrong_answer2': wrong_answer2}
+        with open(self.file_path, 'a') as f:
+            if f.tell() > 1:  # Check if the file is not empty
+                f.write(",\n")
+
+            json.dump(question, f, indent=4, separators=(",", ":"))
+
+    def finish_json(self):
+        with open(self.file_path, 'a') as f:
+            f.write("]")
+
+    # this method can get called at the end of the game and retrieves all saved questions and user answers
+    def load_questions_from_file(self):
         with open(self.file_path, 'r') as f:
             data = json.load(f)
         return data
-
-    def get_question(self):
-        return self.data[random.randint(0, len(self.data) - 1)]
-
-    def save_question(self, question, answer, right_answer, wrong_answer1, wrong_answer2):
-        self.data.append({'question': question, 'answer': answer, 'right_answer': right_answer, 'wrong_answer1': wrong_answer1, 'wrong_answer2': wrong_answer2})
-        with open(self.file_path, 'w') as f:
-            json.dump(self.data, f, indent=4)
-        self.data = self.load_questions()
-        return self.data
-    
-    def get_all_questions(self):
-        return self.data
-    
-    #erase everything in the file
-
-    def erase_all(self):
-        with open(self.file_path, 'w') as f:
-            f.write("[]")
-        self.data = self.load_questions()
-        return self.data
-    
-    
-    
-    
