@@ -13,7 +13,7 @@
   },
   {
     "question": "A polygonal mesh is:",
-    "answers": ["A collection of polygons satisfying certain restrictions", "Macintosh Enhanced SCSI Hardware", "A very famous cocktail"]
+    "answers": ["A collection of polygons", "Macintosh Enhanced SCSI Hardware", "A very famous cocktail"]
   },
   {
     "question": "A triangle mesh is called manifold if the intersection of two triangles is",
@@ -29,15 +29,15 @@
   },
   {
     "question": "Structure from Motion:",
-    "answers": ["recover both 3D points and camera positions", "Is never gonna give you up", "Is never gonna let you down"]
+    "answers": ["recovers 3D points", "Is never gonna give you up", "Is never gonna let you down"]
   },
   {
     "question": "What SLAM stands for?",
-    "answers": ["Simultaneous Localization and Mapping", "When one team win the Six Nations Championship", "A sweet jam"]
+    "answers": ["Simultaneous Localization and Mapping", "A fast car", "A sweet jam"]
   },
   {
     "question": "What you DON'T need to align two objects using known correspondences?",
-    "answers": ["A ruler", "Compute center of gravity of both objects", "Scale one object"]
+    "answers": ["A ruler", "Compute center of gravity", "Scale one object"]
   },
   {
     "question": "In which year was the 'famous' game 'The Legend of Zelda: Ocarina of Time' released?",
@@ -53,7 +53,7 @@
   },
   {
     "question": "What is the main genre of the game 'League of Legends'?",
-    "answers": ["Multiplayer online battle arena (MOBA)", "First-person shooter (FPS)", "Role-playing game (RPG)"]
+    "answers": ["MOBA", "FPS", "RPG"]
   },
   {
     "question": "Who is the creator of the famous game 'Minecraft'?",
@@ -117,6 +117,6 @@
   },
   {
     "question": "The best project in the world is...",
-    "answers": ["This one", "Another one", "Somebody please help me I'm stuck in a quiz factory!"]
+    "answers": ["This one", "Another one", "I'm stuck in a quiz factory!"]
   }
 ]
