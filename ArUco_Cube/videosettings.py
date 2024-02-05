@@ -1,5 +1,4 @@
-# Copyright (C) 2023 The Qt Company Ltd.
-# SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
+# GNU Lesser General Public License Version 3
 
 import os
 from PySide6.QtMultimedia import (QCameraFormat, QMediaFormat, QMediaRecorder,
