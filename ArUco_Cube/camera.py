@@ -300,7 +300,7 @@ class Camera(QMainWindow):
             corners = self.corners[0][0].astype('float32')
 
             # solvePnp
-            tmp_retval, tmp_rvec, tmp_tvec = cv2.solvePnP(objectPoints, self.corners[0][0], self.camera_matrix, self.distortion_coefficients)
+            tmp_retval, tmp_rvec, tmp_tvec = cv2.solvePnP(objectPoints, self.corners[0][0], self.camera_matrix, self.distortion_coefficients, cv2.SOLVEPNP_IPPE_SQUARE)
 
             # Only update values if stat not none
             if tmp_retval is not None:
