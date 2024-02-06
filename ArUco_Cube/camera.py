@@ -10,8 +10,8 @@ from PySide6.QtMultimedia import (QAudioInput, QCamera, QCameraDevice,
                                   QMediaDevices, QMediaMetaData,
                                   QMediaRecorder, QVideoFrame, QVideoSink, QMediaPlayer)
 from PySide6.QtWidgets import QDialog, QMainWindow, QMessageBox, QApplication as qApp
-from PySide6.QtGui import QAction, QActionGroup, QIcon, QImage, QPixmap, QPainter, QFont, QColor, QPen, QFontMetrics,QCursor
-from PySide6.QtCore import QDateTime, QDir, QTimer, Qt, Slot, qWarning,QRect,QSize
+from PySide6.QtGui import QAction, QActionGroup, QIcon, QImage, QPixmap, QPainter, QFont, QColor, QPen, QFontMetrics,QCursor, QPolygonF
+from PySide6.QtCore import QDateTime, QDir, QTimer, Qt, Slot, qWarning,QRect,QSize,QLineF,QPointF
 from metadatadialog import MetaDataDialog
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from imagesettings import ImageSettings
@@ -55,7 +55,8 @@ class Camera(QMainWindow):
         self.timerQuestGuest = None
         self.waitMax = 1
         self.number = self.waitMax
-        self.delayQuestion = 10
+        self.hidden = False
+        self.delayQuestion = 20
         self.showQuestion = False
         self.endQuestion = False
         self.showResult = False
@@ -63,12 +64,16 @@ class Camera(QMainWindow):
         self.color = "white"
         self.showAnswer = False
         self.position = -1
-        self.delayAnswer = 5
+        self.delayAnswer = 10
         self.id = 0
+        self.countQuestion = 1
         self.answerFound = ""
         self.timerAnswer = None
-        self.countQuestion = 0
         self.maxQuestion = 10
+        self.shuffle = True
+        self.pos_Answer = ["left", "center", "right"]
+        self.shuffle_answer = [0,1,2]
+        self.last_seconds = 0
         self.user_score = 0
         self.numberGuess = self.delayAnswer
         self._ui.setupUi(self)
@@ -323,7 +328,6 @@ class Camera(QMainWindow):
     def imageCapturedText(self, image):
         # Slot to handle captured images
         # Add text to the image
-        self.question = self.questions.get_question()
         if (not self.endGame):
             if (self.loop and self.isStartGameOne):
                 self.isTracking = False
@@ -336,11 +340,12 @@ class Camera(QMainWindow):
                     if time.time() - self.timerQuestGuest > 1:
                         self.numberGuess -=1
                         self.timerQuestGuest = time.time()
+                        self.processQuestion()
                     self.textTimer = str(self.numberGuess)
                 if self.number < 0 and not self.showQuestion and not self.endQuestion:
                     self.timerCount = False
                     self.showQuestion = True
-
+                    self.question = self.questions.get_question()
                     self.text = self.question['question']
                     self.answer_1 = self.question['answers'][0]
                     self.answer_2 = self.question['answers'][1]
@@ -349,10 +354,10 @@ class Camera(QMainWindow):
                     self.timerQuest = time.time()
                     self.timerAnswer = time.time()
                     self.timerQuestGuest = time.time()
-                    self.countQuestion +=1
                     self.showAnswer = False
                 if self.showQuestion:
                     if time.time() - self.timerQuest > self.delayQuestion:
+                        self.question = self.questions.get_question()
                         self.text = self.question['question']
                         self.right_answer = self.question['answers'][0]
                         self.wrong_answer1 = self.question['answers'][1]
@@ -372,6 +377,8 @@ class Camera(QMainWindow):
                         self.answerFound = ""
                         self.textTimer = ""
                         self.numberGuess = self.delayAnswer
+                        self.shuffle = True
+                        self.last_seconds = 0
                     if time.time() - self.timerAnswer > self.delayAnswer:
                         # Get the current position of the mouse
                         if (self.position == -1):
@@ -380,7 +387,7 @@ class Camera(QMainWindow):
                             for i in range(len(self.ids)):
                                 c = self.corners[i][0]
                                 x_mean += c[:, 0].mean()
-                            self.position = int(x_mean / len(self.ids))
+                            self.position = int(x_mean / len(self.ids))                           
                             # for test purpose when you don't have a cube
                             #self.position = QCursor.pos().x() - self._ui.viewfinder.mapToGlobal(self._ui.viewfinder.pos()).x()
                             if (self.position < self._ui.viewfinder.size().width()/3):
@@ -440,6 +447,91 @@ class Camera(QMainWindow):
 
         return image
 
+    @Slot()
+    def processQuestion(self):
+        if self.countQuestion == 2:
+            self.last_seconds +=1
+            if self.last_seconds ==5 and self.numberGuess >0 and self.shuffle:
+                self.answer_1 = self.question['answers'][2]
+                self.answer_2 = self.question['answers'][0]
+                self.answer_3 = self.question['answers'][1]
+                self.last_seconds = 0
+        elif self.countQuestion == 3:
+            self.last_seconds +=1
+            if self.last_seconds ==2 and self.numberGuess >0 and self.shuffle:
+                self.answer_1 = self.question['answers'][2]
+                self.answer_2 = self.question['answers'][0]
+                self.answer_3 = self.question['answers'][1]
+                self.last_seconds = 0
+        elif self.countQuestion == 4:
+            self.last_seconds +=1
+            if self.last_seconds ==5 and self.numberGuess >0 and self.shuffle :
+                random.shuffle(self.question['answers'])
+                self.answer_1 = self.question['answers'][0]
+                self.answer_2 = self.question['answers'][1]
+                self.answer_3 = self.question['answers'][2]
+                self.last_seconds = 0
+        elif self.countQuestion == 5:
+            self.last_seconds +=1
+            if self.last_seconds ==2 and self.numberGuess >1 and self.shuffle:
+                random.shuffle(self.question['answers'])
+                self.answer_1 = self.question['answers'][0]
+                self.answer_2 = self.question['answers'][1]
+                self.answer_3 = self.question['answers'][2]
+                self.last_seconds = 0
+        elif self.countQuestion == 6:
+            self.last_seconds +=1
+            if self.last_seconds ==5 and self.numberGuess >1 and self.shuffle:
+                self.hidden =True
+                self.last_seconds = 0
+        elif self.countQuestion == 7:
+            self.last_seconds +=1
+            if self.last_seconds ==5 and self.numberGuess >1 and self.shuffle:
+                self.shuffle_answer[0] = 1
+                self.shuffle_answer[1] = 2
+                self.shuffle_answer[2] = 0
+                self.answer_1 = self.question['answers'][2]
+                self.answer_2 = self.question['answers'][0]
+                self.answer_3 = self.question['answers'][1]
+                self.hidden =True
+        elif self.countQuestion == 8:
+            self.last_seconds +=1
+            if self.last_seconds ==5 and self.numberGuess >1 and self.shuffle:
+                random.shuffle(self.shuffle_answer)  
+                self.answer_1 = self.question['answers'][self.shuffle_answer.index(0)]
+                self.answer_2 = self.question['answers'][self.shuffle_answer.index(1)]
+                self.answer_3 = self.question['answers'][self.shuffle_answer.index(2)]
+                self.hidden =True
+                self.last_seconds = 0
+        elif self.countQuestion == 9:
+            self.last_seconds +=1
+            if self.last_seconds ==2 and self.numberGuess >1 and self.shuffle:
+                random.shuffle(self.shuffle_answer)
+                self.answer_1 = self.question['answers'][self.shuffle_answer.index(0)]
+                self.answer_2 = self.question['answers'][self.shuffle_answer.index(1)]
+                self.answer_3 = self.question['answers'][self.shuffle_answer.index(2)]
+                self.last_seconds = 0
+                self.hidden =True
+        elif self.countQuestion == 10:  
+            self.last_seconds +=1
+            if (self.last_seconds == 1):
+                self.hidden = True
+            if self.last_seconds ==2 and self.numberGuess >1 and self.shuffle :
+                random.shuffle(self.question['answers'])
+                self.answer_1 = self.question['answers'][0]
+                self.answer_2 = self.question['answers'][1]
+                self.answer_3 = self.question['answers'][2]
+                self.hidden = False
+            elif self.last_seconds ==4 and self.numberGuess >1 and self.shuffle:
+                random.shuffle(self.shuffle_answer)
+                self.answer_1 = self.question['answers'][self.shuffle_answer.index(0)]
+                self.answer_2 = self.question['answers'][self.shuffle_answer.index(1)]
+                self.answer_3 = self.question['answers'][self.shuffle_answer.index(2)]
+                self.hidden =True
+                self.last_seconds = 0
+        if self.numberGuess <= 0 :
+            self.shuffle = False
+            self.hidden = False
 
         
     @Slot()
@@ -480,13 +572,32 @@ class Camera(QMainWindow):
                 color = QColor(QColor(240, 240, 240))
 
             painter.setPen(color)
-            rectangle = painter.drawText(pixmap.rect(),position, text)
-            painter.fillRect(rectangle,color)
-            painter.drawRect(rectangle)
 
-            painter.setPen("black")
-            painter.drawText(pixmap.rect(),position, text)
-
+            if (not self.hidden):
+                rectangle = painter.drawText(pixmap.rect(),position, text)
+                painter.fillRect(rectangle,color)
+                painter.setPen("black")
+                painter.drawText(pixmap.rect(),position, text)
+            else:
+                # Draw an arc from this answer to the next one
+                """
+                arrow_start = rectangle.y() +rectangle.height()
+                arrow_end = (height - arrow_start)/2 +arrow_start
+                print(arrow_end)
+                print(arrow_start)
+                print(height/2)
+                x = rectangle.x() + rectangle.width()/2
+                p1 = QPointF(x,arrow_end )
+                p2 = QPointF(x-0.05*width, arrow_end-height*0.05)
+                p3 = QPointF(x+0.05*width, arrow_end-height*0.05)
+                painter.drawPolygon(QPolygonF([p1, p2, p3]))
+                painter.drawLine(x, arrow_start, x, arrow_end-height*0.05)
+                painter.drawText(x-width*0.001,arrow_end + height * 0.05, self.pos_Answer[self.shuffle_answer[self.id-1]])
+                """
+                rectangle = painter.drawText(pixmap.rect(),position, self.pos_Answer[self.shuffle_answer[self.id-1]])
+                painter.fillRect(rectangle,color)
+                painter.setPen("black")
+                painter.drawText(pixmap.rect(),position, self.pos_Answer[self.shuffle_answer[self.id-1]])
         # Draw the overlay text at the bottom of the image
         else:
             rectangle = painter.drawText(pixmap.rect(),position, text)
