@@ -289,7 +289,7 @@ class Camera(QMainWindow):
         # Convert the modified image to QImage for display
         height, width, channel = self.result.shape
         bytes_per_line = 3 * width
-        image = QImage(self.result.data, width, height, bytes_per_line, QImage.Format_RGB888)
+        image = QImage(self.undistort.data, width, height, bytes_per_line, QImage.Format_RGB888)
 
         return image
 
